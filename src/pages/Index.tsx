@@ -262,8 +262,10 @@ const Index = () => {
       </main>
 
       <footer className="mt-16 border-t bg-white py-8">
-        <div className="container text-center text-sm text-muted-foreground">
+        <div className="container text-center text-sm text-muted-foreground space-y-2">
           <p>© 2024 Математическая кухня. Тренажёры и методички по математике</p>
+          <p>ИП Александрова Людмила Геннадьевна</p>
+          <p>ИНН: 820100655703</p>
         </div>
       </footer>
     </div>
