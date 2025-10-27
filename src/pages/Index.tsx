@@ -20,6 +20,8 @@ interface Product {
   category: string;
   type: string;
   sample_pdf_url?: string;
+  full_pdf_with_answers_url?: string;
+  full_pdf_without_answers_url?: string;
 }
 
 interface CartItem extends Product {
