@@ -298,6 +298,31 @@ const Index = () => {
                       </div>
                     )}
                     
+                    <div className="space-y-2 bg-muted/30 p-4 rounded-lg">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Сумма:</span>
+                        <span>{subtotal} ₽</span>
+                      </div>
+                      {hasDiscount && (
+                        <div className="flex justify-between text-sm text-green-600 font-medium">
+                          <span>Скидка 15%:</span>
+                          <span>-{discountAmount} ₽</span>
+                        </div>
+                      )}
+                      <Separator />
+                      <div className="flex justify-between items-center text-lg font-bold">
+                        <span>Итого:</span>
+                        <span>{totalPrice} ₽</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="w-full" size="lg" onClick={openCheckout}>
+                      <Icon name="CreditCard" size={20} className="mr-2" />
+                      Оформить заказ
+                    </Button>
+                    
+                    <Separator />
+                    
                     {cart.map(item => (
                       <Card key={item.id}>
                         <CardContent className="pt-6">
@@ -341,31 +366,6 @@ const Index = () => {
                         </CardContent>
                       </Card>
                     ))}
-                    
-                    <Separator className="my-6" />
-                    
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Сумма:</span>
-                        <span>{subtotal} ₽</span>
-                      </div>
-                      {hasDiscount && (
-                        <div className="flex justify-between text-sm text-green-600 font-medium">
-                          <span>Скидка 15%:</span>
-                          <span>-{discountAmount} ₽</span>
-                        </div>
-                      )}
-                      <Separator />
-                      <div className="flex justify-between items-center text-lg font-bold">
-                        <span>Итого:</span>
-                        <span>{totalPrice} ₽</span>
-                      </div>
-                    </div>
-                    
-                    <Button className="w-full" size="lg" onClick={openCheckout}>
-                      <Icon name="CreditCard" size={20} className="mr-2" />
-                      Оформить заказ
-                    </Button>
                   </>
                 )}
               </div>
