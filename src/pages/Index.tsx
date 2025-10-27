@@ -369,7 +369,13 @@ const Index = () => {
       </main>
 
       <footer className="mt-16 border-t bg-white py-8">
-        <div className="container text-center text-sm text-muted-foreground space-y-3">
+        <div className="container text-center text-sm text-muted-foreground space-y-4">
+          <div className="flex justify-center gap-6 items-center">
+            <img src="https://yookassa.ru/files/logo_sbp.svg" alt="СБП" className="h-8" />
+            <img src="https://static.yoomoney.ru/files-front/www/cards-logos/visa.svg" alt="Visa" className="h-6" />
+            <img src="https://static.yoomoney.ru/files-front/www/cards-logos/mastercard.svg" alt="Mastercard" className="h-8" />
+            <img src="https://static.yoomoney.ru/files-front/www/cards-logos/mir.svg" alt="МИР" className="h-6" />
+          </div>
           <div className="flex justify-center">
             <a 
               href="https://vk.com/mk_room" 
