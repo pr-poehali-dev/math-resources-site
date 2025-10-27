@@ -87,10 +87,7 @@ const Login = () => {
               Вернуться на сайт
             </Button>
           </form>
-          <div className="mt-6 text-sm text-muted-foreground text-center">
-            <p>Тестовые данные:</p>
-            <p className="font-mono">admin / admin123</p>
-          </div>
+
         </CardContent>
       </Card>
     </div>
