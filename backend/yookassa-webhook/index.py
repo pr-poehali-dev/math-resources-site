@@ -85,15 +85,15 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         for product_id in product_id_list:
             cur.execute(
-                "SELECT title, price FROM t_p99209851_math_resources_site.products WHERE id = %s",
+                "SELECT title, price, full_pdf_url FROM t_p99209851_math_resources_site.products WHERE id = %s",
                 (product_id,)
             )
             product = cur.fetchone()
             
             if product:
                 cur.execute(
-                    "INSERT INTO t_p99209851_math_resources_site.order_items (order_id, product_id, product_title, product_price) VALUES (%s, %s, %s, %s)",
-                    (order_id, product_id, product[0], product[1])
+                    "INSERT INTO t_p99209851_math_resources_site.order_items (order_id, product_id, product_title, product_price, full_pdf_url) VALUES (%s, %s, %s, %s, %s)",
+                    (order_id, product_id, product[0], product[1], product[2])
                 )
     
     conn.commit()
@@ -106,7 +106,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     }).encode()
     
     email_req = urllib.request.Request(
-        'https://functions.poehali.dev/send-purchase-email',
+        'https://functions.poehali.dev/fa6783b1-aae1-4057-8f19-8f9ccb0665f1',
         data=email_payload,
         headers={'Content-Type': 'application/json'}
     )
