@@ -273,6 +273,31 @@ const Index = () => {
                   </div>
                 ) : (
                   <>
+                    {!hasDiscount && totalItems > 0 && totalItems < 10 && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-900">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Icon name="Tag" size={16} />
+                          <span className="font-semibold">Добавьте ещё {10 - totalItems} {(10 - totalItems) === 1 ? 'товар' : 'товара'} для скидки 15%</span>
+                        </div>
+                        <div className="w-full bg-blue-200 rounded-full h-2 mt-2">
+                          <div 
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${(totalItems / 10) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    
+                    {hasDiscount && (
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-900">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Icon name="PartyPopper" size={20} />
+                          <span className="font-bold text-base">Скидка 15% активирована!</span>
+                        </div>
+                        <p className="text-sm">Ваша выгода: <span className="font-bold text-lg">{discountAmount} ₽</span></p>
+                      </div>
+                    )}
+                    
                     {cart.map(item => (
                       <Card key={item.id}>
                         <CardContent className="pt-6">
@@ -318,30 +343,6 @@ const Index = () => {
                     ))}
                     
                     <Separator className="my-6" />
-                    
-                    {!hasDiscount && totalItems > 0 && totalItems < 10 && (
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-900">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Icon name="Tag" size={16} />
-                          <span className="font-semibold">Добавьте ещё {10 - totalItems} {(10 - totalItems) === 1 ? 'товар' : 'товара'} для скидки 15%</span>
-                        </div>
-                        <div className="w-full bg-blue-200 rounded-full h-2 mt-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${(totalItems / 10) * 100}%` }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                    
-                    {hasDiscount && (
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-900">
-                        <div className="flex items-center gap-2">
-                          <Icon name="Check" size={16} />
-                          <span className="font-semibold">🎉 Скидка 15% активирована!</span>
-                        </div>
-                      </div>
-                    )}
                     
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
