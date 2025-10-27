@@ -15,6 +15,7 @@ interface Product {
   price: number;
   category: string;
   type: string;
+  sample_pdf_url?: string;
 }
 
 interface CartItem extends Product {
@@ -94,7 +95,7 @@ const Index = () => {
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Icon name="GraduationCap" size={28} className="text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">МатМаркет</h1>
+            <h1 className="text-2xl font-bold text-foreground">Математическая кухня</h1>
           </div>
 
           <div className="flex items-center gap-2">
@@ -234,6 +235,19 @@ const Index = () => {
                 <CardTitle className="text-lg">{product.title}</CardTitle>
                 <CardDescription>{product.description}</CardDescription>
               </CardHeader>
+              <CardContent>
+                {product.sample_pdf_url && (
+                  <a
+                    href={product.sample_pdf_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-primary hover:underline"
+                  >
+                    <Icon name="FileText" size={16} />
+                    Скачать бесплатный образец (PDF)
+                  </a>
+                )}
+              </CardContent>
               <CardFooter className="flex justify-between items-center">
                 <p className="text-2xl font-bold">{product.price} ₽</p>
                 <Button onClick={() => addToCart(product)}>
@@ -249,7 +263,7 @@ const Index = () => {
 
       <footer className="mt-16 border-t bg-white py-8">
         <div className="container text-center text-sm text-muted-foreground">
-          <p>© 2024 МатМаркет. Образовательные материалы по математике</p>
+          <p>© 2024 Математическая кухня. Тренажёры и методички по математике</p>
         </div>
       </footer>
     </div>

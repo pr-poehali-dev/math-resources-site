@@ -18,6 +18,7 @@ interface Product {
   price: number;
   category: string;
   type: string;
+  sample_pdf_url?: string;
 }
 
 const API_URL = 'https://functions.poehali.dev/4350c782-6bfa-4c53-b148-e1f621446eaa';
@@ -37,12 +38,18 @@ const Admin = () => {
     description: '',
     price: '',
     category: '5 класс',
-    type: 'Методичка'
+    type: 'Методичка',
+    sample_pdf_url: ''
   });
 
   useEffect(() => {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
     loadProducts();
-  }, []);
+  }, [navigate]);
 
   const loadProducts = async () => {
     try {
@@ -107,7 +114,8 @@ const Admin = () => {
       description: product.description,
       price: product.price.toString(),
       category: product.category,
-      type: product.type
+      type: product.type,
+      sample_pdf_url: product.sample_pdf_url || ''
     });
     setIsDialogOpen(true);
   };
@@ -119,8 +127,16 @@ const Admin = () => {
       description: '',
       price: '',
       category: '5 класс',
-      type: 'Методичка'
+      type: 'Методичка',
+      sample_pdf_url: ''
     });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('username');
+    navigate('/login');
+    toast.info('Вы вышли из системы');
   };
 
   return (
@@ -137,6 +153,11 @@ const Admin = () => {
             </div>
           </div>
 
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" onClick={handleLogout}>
+              <Icon name="LogOut" size={18} className="mr-2" />
+              Выйти
+            </Button>
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
             if (!open) resetForm();
@@ -221,6 +242,17 @@ const Admin = () => {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="sample_pdf_url">Ссылка на PDF-образец (необязательно)</Label>
+                    <Input
+                      id="sample_pdf_url"
+                      type="url"
+                      placeholder="https://example.com/sample.pdf"
+                      value={formData.sample_pdf_url}
+                      onChange={(e) => setFormData({ ...formData, sample_pdf_url: e.target.value })}
+                    />
+                  </div>
                 </div>
 
                 <DialogFooter>
@@ -231,6 +263,7 @@ const Admin = () => {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
       </header>
 

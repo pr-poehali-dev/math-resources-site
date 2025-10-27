@@ -36,7 +36,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             product_id = event.get('queryStringParameters', {}).get('id')
             
             if product_id:
-                cur.execute('SELECT id, title, description, price, category, type FROM products WHERE id = %s', (product_id,))
+                cur.execute('SELECT id, title, description, price, category, type, sample_pdf_url FROM products WHERE id = %s', (product_id,))
                 row = cur.fetchone()
                 if row:
                     product = {
@@ -45,7 +45,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                         'description': row[2],
                         'price': row[3],
                         'category': row[4],
-                        'type': row[5]
+                        'type': row[5],
+                        'sample_pdf_url': row[6]
                     }
                     return {
                         'statusCode': 200,
@@ -61,7 +62,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                         'isBase64Encoded': False
                     }
             else:
-                cur.execute('SELECT id, title, description, price, category, type FROM products ORDER BY id')
+                cur.execute('SELECT id, title, description, price, category, type, sample_pdf_url FROM products ORDER BY id')
                 rows = cur.fetchall()
                 products = [
                     {
@@ -70,7 +71,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                         'description': row[2],
                         'price': row[3],
                         'category': row[4],
-                        'type': row[5]
+                        'type': row[5],
+                        'sample_pdf_url': row[6]
                     }
                     for row in rows
                 ]
@@ -88,10 +90,11 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             price = body_data.get('price')
             category = body_data.get('category')
             product_type = body_data.get('type')
+            sample_pdf_url = body_data.get('sample_pdf_url')
             
             cur.execute(
-                'INSERT INTO products (title, description, price, category, type) VALUES (%s, %s, %s, %s, %s) RETURNING id',
-                (title, description, price, category, product_type)
+                'INSERT INTO products (title, description, price, category, type, sample_pdf_url) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id',
+                (title, description, price, category, product_type, sample_pdf_url)
             )
             new_id = cur.fetchone()[0]
             conn.commit()
@@ -111,10 +114,11 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             price = body_data.get('price')
             category = body_data.get('category')
             product_type = body_data.get('type')
+            sample_pdf_url = body_data.get('sample_pdf_url')
             
             cur.execute(
-                'UPDATE products SET title = %s, description = %s, price = %s, category = %s, type = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
-                (title, description, price, category, product_type, product_id)
+                'UPDATE products SET title = %s, description = %s, price = %s, category = %s, type = %s, sample_pdf_url = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
+                (title, description, price, category, product_type, sample_pdf_url, product_id)
             )
             conn.commit()
             
