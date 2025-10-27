@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
 
-const AUTH_URL = 'https://functions.poehali.dev/201fd41f-cf6f-46c5-a681-1300b491beb4';
+const AUTH_URL = 'https://functions.poehali.dev/8992932f-caba-4f72-8b04-4f01cbda4427';
 
 const Login = () => {
   const navigate = useNavigate();
