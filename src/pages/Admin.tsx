@@ -60,6 +60,7 @@ const Admin = () => {
     try {
       const response = await fetch(API_URL);
       const data = await response.json();
+      console.log('Loaded products:', data.slice(0, 1).map(p => ({ id: p.id, description: p.description })));
       setProducts(data);
     } catch (error) {
       toast.error('Ошибка загрузки товаров');
