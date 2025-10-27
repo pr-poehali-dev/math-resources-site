@@ -213,6 +213,13 @@ const Index = () => {
               <Icon name="Settings" size={18} className="mr-2" />
               Админка
             </Button>
+
+            {localStorage.getItem('user_token') && (
+              <Button variant="ghost" size="sm" onClick={() => navigate('/my-purchases')}>
+                <Icon name="User" size={18} className="mr-2" />
+                Мои покупки
+              </Button>
+            )}
           
             <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
             <SheetTrigger asChild>
