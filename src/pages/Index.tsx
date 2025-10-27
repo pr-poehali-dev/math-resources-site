@@ -351,7 +351,10 @@ const Index = () => {
               </CardContent>
               <CardFooter className="flex justify-between items-center">
                 <p className="text-2xl font-bold">{product.price} ₽</p>
-                <Button onClick={() => addToCart(product)}>
+                <Button 
+                  onClick={() => addToCart(product)}
+                  className="bg-teal-400 hover:bg-teal-500 text-white"
+                >
                   <Icon name="ShoppingCart" size={18} className="mr-2" />
                   В корзину
                 </Button>
