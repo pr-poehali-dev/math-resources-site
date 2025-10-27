@@ -1,0 +1,29 @@
+{
+  "tests": [
+    {
+      "name": "Test webhook payment succeeded",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "event": "payment.succeeded",
+        "object": {
+          "id": "test-payment-123",
+          "amount": {
+            "value": "500.00"
+          },
+          "description": "Test order",
+          "receipt": {
+            "customer": {
+              "email": "test@example.com"
+            }
+          }
+        }
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "status": "success"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

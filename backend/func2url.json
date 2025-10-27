@@ -1,7 +1,7 @@
 {
+  "yookassa-webhook": "https://functions.poehali.dev/12ec2917-d90f-4d0c-9e80-1b0bdcf79273",
   "user-auth": "https://functions.poehali.dev/952cea32-e71e-48d7-8465-264417100e39",
   "payment": "https://functions.poehali.dev/c3183bd5-f862-4c83-bf32-b86987ab972c",
   "upload": "https://functions.poehali.dev/cc6c5ccf-7c44-4ff3-94d3-67a08ba0b9a9",
-  "auth": "https://functions.poehali.dev/201fd41f-cf6f-46c5-a681-1300b491beb4",
   "products": "https://functions.poehali.dev/4350c782-6bfa-4c53-b148-e1f621446eaa"
 }
