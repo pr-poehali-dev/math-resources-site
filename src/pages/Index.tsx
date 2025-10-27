@@ -45,9 +45,20 @@ const Index = () => {
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
   const [registerName, setRegisterName] = useState('');
+  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUserEmail, setCurrentUserEmail] = useState('');
 
   useEffect(() => {
     loadProducts();
+    const token = localStorage.getItem('user_token');
+    const email = localStorage.getItem('user_email');
+    if (token && email) {
+      setIsLoggedIn(true);
+      setCurrentUserEmail(email);
+    }
   }, []);
 
   const loadProducts = async () => {
@@ -214,10 +225,15 @@ const Index = () => {
               Админка
             </Button>
 
-            {localStorage.getItem('user_token') && (
+            {isLoggedIn ? (
               <Button variant="ghost" size="sm" onClick={() => navigate('/my-purchases')}>
                 <Icon name="User" size={18} className="mr-2" />
-                Мои покупки
+                Личный кабинет
+              </Button>
+            ) : (
+              <Button variant="default" size="sm" onClick={() => setIsAuthDialogOpen(true)}>
+                <Icon name="LogIn" size={18} className="mr-2" />
+                Войти
               </Button>
             )}
           
@@ -432,6 +448,159 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
+        <DialogContent className="sm:max-w-[450px]">
+          <DialogHeader>
+            <DialogTitle>Войти или зарегистрироваться</DialogTitle>
+            <DialogDescription>
+              Получите доступ к своим покупкам в любое время
+            </DialogDescription>
+          </DialogHeader>
+
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="login">Вход</TabsTrigger>
+              <TabsTrigger value="register">Регистрация</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="login" className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="login-email">Email</Label>
+                <Input
+                  id="login-email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="login-password">Пароль</Label>
+                <Input
+                  id="login-password"
+                  type="password"
+                  placeholder="Введите пароль"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <Button 
+                className="w-full" 
+                onClick={async () => {
+                  if (!loginEmail || !loginPassword) return;
+                  try {
+                    const response = await fetch('https://functions.poehali.dev/952cea32-e71e-48d7-8465-264417100e39', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        action: 'login',
+                        email: loginEmail,
+                        password: loginPassword
+                      })
+                    });
+                    const data = await response.json();
+                    if (response.ok && data.token) {
+                      localStorage.setItem('user_token', data.token);
+                      localStorage.setItem('user_email', data.email);
+                      setIsLoggedIn(true);
+                      setCurrentUserEmail(data.email);
+                      setIsAuthDialogOpen(false);
+                      toast.success('Вход выполнен успешно!');
+                    } else {
+                      toast.error(data.error || 'Ошибка входа');
+                    }
+                  } catch (error) {
+                    toast.error('Ошибка при входе');
+                  }
+                }}
+                disabled={!loginEmail || !loginPassword}
+              >
+                Войти
+              </Button>
+            </TabsContent>
+
+            <TabsContent value="register" className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="auth-register-name">Имя (необязательно)</Label>
+                <Input
+                  id="auth-register-name"
+                  placeholder="Ваше имя"
+                  value={registerName}
+                  onChange={(e) => setRegisterName(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="auth-register-email">Email</Label>
+                <Input
+                  id="auth-register-email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={registerEmail}
+                  onChange={(e) => setRegisterEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="auth-register-password">Пароль</Label>
+                <Input
+                  id="auth-register-password"
+                  type="password"
+                  placeholder="Минимум 6 символов"
+                  value={registerPassword}
+                  onChange={(e) => setRegisterPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Все покупки сохранятся в вашем личном кабинете
+              </p>
+
+              <Button 
+                className="w-full" 
+                onClick={async () => {
+                  if (!registerEmail || !registerPassword) return;
+                  try {
+                    const response = await fetch('https://functions.poehali.dev/952cea32-e71e-48d7-8465-264417100e39', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        action: 'register',
+                        email: registerEmail,
+                        password: registerPassword,
+                        full_name: registerName
+                      })
+                    });
+                    const data = await response.json();
+                    if (response.ok && data.token) {
+                      localStorage.setItem('user_token', data.token);
+                      localStorage.setItem('user_email', data.email);
+                      setIsLoggedIn(true);
+                      setCurrentUserEmail(data.email);
+                      setIsAuthDialogOpen(false);
+                      toast.success('Регистрация выполнена успешно!');
+                    } else {
+                      toast.error(data.error || 'Ошибка регистрации');
+                    }
+                  } catch (error) {
+                    toast.error('Ошибка при регистрации');
+                  }
+                }}
+                disabled={!registerEmail || !registerPassword}
+              >
+                Зарегистрироваться
+              </Button>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={isCheckoutOpen} onOpenChange={setIsCheckoutOpen}>
         <DialogContent className="sm:max-w-[500px]">
