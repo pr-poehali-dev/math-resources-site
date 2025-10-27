@@ -321,8 +321,10 @@ const Admin = () => {
                               <Badge variant="outline">{formData.type}</Badge>
                             </div>
                             <CardTitle className="text-lg">{formData.title || 'Название товара'}</CardTitle>
-                            <CardDescription className="text-sm whitespace-pre-line leading-relaxed">
-                              {formData.description || 'Описание товара'}
+                            <CardDescription className="text-sm whitespace-pre-line leading-relaxed space-y-1">
+                              {(formData.description || 'Описание товара').split('\n').map((line, i) => (
+                                <div key={i}>{line}</div>
+                              ))}
                             </CardDescription>
                           </CardHeader>
                           <CardContent>
