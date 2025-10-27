@@ -248,10 +248,13 @@ const Admin = () => {
                     <Input
                       id="sample_pdf_url"
                       type="url"
-                      placeholder="https://example.com/sample.pdf"
+                      placeholder="https://drive.google.com/file/d/..."
                       value={formData.sample_pdf_url}
                       onChange={(e) => setFormData({ ...formData, sample_pdf_url: e.target.value })}
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Загрузите PDF на Google Drive, Dropbox или Яндекс.Диск и вставьте ссылку для скачивания
+                    </p>
                   </div>
                 </div>
 
