@@ -92,7 +92,10 @@ const Admin = () => {
         toast.success(editingProduct ? 'Товар обновлён' : 'Товар добавлен');
         setIsDialogOpen(false);
         resetForm();
-        loadProducts();
+        await loadProducts();
+        console.log('Products reloaded after save');
+      } else {
+        console.error('Save failed:', response.status, await response.text());
       }
     } catch (error) {
       toast.error('Ошибка сохранения');
