@@ -195,7 +195,7 @@ const Index = () => {
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <Icon name="GraduationCap" size={28} className="text-teal-400" />
+            <Icon name="GraduationCap" size={28} className="text-primary" />
             <h1 className="text-2xl font-bold text-foreground">Математическая кухня</h1>
           </div>
 
@@ -210,7 +210,7 @@ const Index = () => {
               <Button variant="outline" size="icon" className="relative">
                 <Icon name="ShoppingCart" size={20} />
                 {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-teal-400 text-xs text-white flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-xs text-white flex items-center justify-center">
                     {totalItems}
                   </span>
                 )}
@@ -284,7 +284,7 @@ const Index = () => {
                         <span>{totalPrice} ₽</span>
                       </div>
                       
-                      <Button className="w-full bg-teal-400 hover:bg-teal-500 text-white" size="lg" onClick={openCheckout}>
+                      <Button className="w-full" size="lg" onClick={openCheckout}>
                         <Icon name="CreditCard" size={20} className="mr-2" />
                         Оформить заказ
                       </Button>
@@ -312,7 +312,7 @@ const Index = () => {
               key={category}
               variant={selectedCategory === category ? 'default' : 'outline'}
               onClick={() => setSelectedCategory(category)}
-              className={selectedCategory === category ? 'bg-teal-400 hover:bg-teal-500 text-white transition-all' : 'transition-all'}
+              className="transition-all"
             >
               {category}
             </Button>
@@ -321,7 +321,7 @@ const Index = () => {
 
         {loading ? (
           <div className="text-center py-12">
-            <Icon name="Loader2" size={48} className="mx-auto mb-4 animate-spin text-teal-400" />
+            <Icon name="Loader2" size={48} className="mx-auto mb-4 animate-spin text-primary" />
             <p className="text-muted-foreground">Загрузка...</p>
           </div>
         ) : (
@@ -353,7 +353,6 @@ const Index = () => {
                 <p className="text-2xl font-bold">{product.price} ₽</p>
                 <Button 
                   onClick={() => addToCart(product)}
-                  className="bg-teal-400 hover:bg-teal-500 text-white"
                 >
                   <Icon name="ShoppingCart" size={18} className="mr-2" />
                   В корзину
@@ -418,7 +417,7 @@ const Index = () => {
               </div>
 
               <Button 
-                className="w-full bg-teal-400 hover:bg-teal-500 text-white" 
+                className="w-full" 
                 onClick={handleGuestCheckout}
                 disabled={checkoutLoading || !guestEmail}
               >
@@ -466,7 +465,7 @@ const Index = () => {
               </p>
 
               <Button 
-                className="w-full bg-teal-400 hover:bg-teal-500 text-white" 
+                className="w-full" 
                 onClick={handleRegisterCheckout}
                 disabled={checkoutLoading || !registerEmail || !registerPassword}
               >
