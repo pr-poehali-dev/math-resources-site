@@ -339,7 +339,7 @@ const Index = () => {
                 <CardDescription>{product.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                {product.sample_pdf_url && (
+                {product.sample_pdf_url && product.sample_pdf_url.trim() !== '' && (
                   <a
                     href={product.sample_pdf_url}
                     target="_blank"
