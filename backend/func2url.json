@@ -1,4 +1,5 @@
 {
+  "reset-password": "https://functions.poehali.dev/faceb64d-af6d-4fd3-b880-d9c76ab5debc",
   "payment": "https://functions.poehali.dev/c3183bd5-f862-4c83-bf32-b86987ab972c",
   "upload": "https://functions.poehali.dev/cc6c5ccf-7c44-4ff3-94d3-67a08ba0b9a9",
   "auth": "https://functions.poehali.dev/201fd41f-cf6f-46c5-a681-1300b491beb4",
