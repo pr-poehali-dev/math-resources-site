@@ -1,4 +1,5 @@
 {
+  "manual-deliver": "https://functions.poehali.dev/4cad51da-a7d3-49bf-a277-98b51b37e58c",
   "manual-send-purchase": "https://functions.poehali.dev/35411a0f-0ed2-4d0a-978c-5eaa1970d039",
   "send-purchase-email": "https://functions.poehali.dev/fa6783b1-aae1-4057-8f19-8f9ccb0665f1",
   "my-purchases": "https://functions.poehali.dev/3a1ed603-9a84-4270-a759-a900fcc8d5b3",
