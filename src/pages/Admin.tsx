@@ -78,6 +78,9 @@ const Admin = () => {
         ...(editingProduct && { id: editingProduct.id })
       };
 
+      console.log('Sending payload:', { description: payload.description, descriptionLength: payload.description.length });
+      console.log('Description chars:', payload.description.split('').map((c, i) => `[${i}]: ${c.charCodeAt(0)} (${c === '\n' ? '\\n' : c})`).slice(0, 50));
+
       const response = await fetch(API_URL, {
         method: editingProduct ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
