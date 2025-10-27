@@ -7,26 +7,24 @@ import { toast } from 'sonner';
 const AdminDeliver = () => {
   const [loading, setLoading] = useState(false);
   const [email] = useState('svobodny.khudojnik@yandex.ru');
-  const [productId] = useState('12');
-  const [amount] = useState('10');
+  const [orderId] = useState('3');
 
   const handleDeliver = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://functions.poehali.dev/4cad51da-a7d3-49bf-a277-98b51b37e58c', {
+      const response = await fetch('https://functions.poehali.dev/fa6783b1-aae1-4057-8f19-8f9ccb0665f1', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email,
-          product_ids: [parseInt(productId)],
-          amount: parseFloat(amount)
+          customer_email: email,
+          order_id: parseInt(orderId)
         })
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        toast.success(`Заказ №${data.order_id} создан! Письмо отправлено на ${email}`);
+        toast.success(`Письмо отправлено на ${email}!`);
       } else {
         toast.error(data.error || 'Ошибка отправки');
       }
@@ -47,12 +45,11 @@ const AdminDeliver = () => {
         <CardContent className="space-y-4">
           <div>
             <p className="text-sm text-gray-600 mb-2">Email: {email}</p>
-            <p className="text-sm text-gray-600 mb-2">Товар ID: {productId} (Метод площадей)</p>
-            <p className="text-sm text-gray-600 mb-4">Сумма: {amount}₽</p>
+            <p className="text-sm text-gray-600 mb-2">Заказ №{orderId} (Метод площадей)</p>
           </div>
           
           <Button onClick={handleDeliver} disabled={loading} className="w-full">
-            {loading ? 'Отправка...' : 'Отправить товар на почту'}
+            {loading ? 'Отправка...' : 'Отправить письмо с материалами'}
           </Button>
         </CardContent>
       </Card>
