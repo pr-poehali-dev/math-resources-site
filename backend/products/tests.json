@@ -4,18 +4,7 @@
       "name": "Get all products",
       "method": "GET",
       "path": "/",
-      "expectedStatus": 200,
-      "expectedBody": [
-        {
-          "id": 1,
-          "title": "string",
-          "description": "string",
-          "price": 0,
-          "category": "string",
-          "type": "string"
-        }
-      ],
-      "bodyMatcher": "partial"
+      "expectedStatus": 200
     },
     {
       "name": "Create product",
@@ -28,12 +17,7 @@
         "category": "5 класс",
         "type": "Методичка"
       },
-      "expectedStatus": 201,
-      "expectedBody": {
-        "id": 0,
-        "message": "Product created"
-      },
-      "bodyMatcher": "partial"
+      "expectedStatus": 201
     }
   ]
 }

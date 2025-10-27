@@ -10,7 +10,8 @@ interface Purchase {
   id: number;
   product_title: string;
   product_price: number;
-  full_pdf_url: string;
+  full_pdf_with_answers_url: string;
+  full_pdf_without_answers_url: string;
   created_at: string;
 }
 
@@ -108,19 +109,35 @@ const MyPurchases = () => {
                       </Badge>
                     </div>
                     
-                    {purchase.full_pdf_url && (
-                      <a
-                        href={purchase.full_pdf_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block"
-                      >
-                        <Button className="w-full" variant="default">
-                          <Icon name="Download" size={18} className="mr-2" />
-                          Скачать материал
-                        </Button>
-                      </a>
-                    )}
+                    <div className="space-y-2">
+                      {purchase.full_pdf_with_answers_url && (
+                        <a
+                          href={purchase.full_pdf_with_answers_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block"
+                        >
+                          <Button className="w-full" variant="default">
+                            <Icon name="Download" size={18} className="mr-2" />
+                            Скачать с ответами
+                          </Button>
+                        </a>
+                      )}
+                      
+                      {purchase.full_pdf_without_answers_url && (
+                        <a
+                          href={purchase.full_pdf_without_answers_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block"
+                        >
+                          <Button className="w-full" variant="outline">
+                            <Icon name="Download" size={18} className="mr-2" />
+                            Скачать без ответов
+                          </Button>
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>

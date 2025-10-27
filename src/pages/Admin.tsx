@@ -19,7 +19,8 @@ interface Product {
   category: string;
   type: string;
   sample_pdf_url?: string;
-  full_pdf_url?: string;
+  full_pdf_with_answers_url?: string;
+  full_pdf_without_answers_url?: string;
 }
 
 const API_URL = 'https://functions.poehali.dev/4350c782-6bfa-4c53-b148-e1f621446eaa';
@@ -41,7 +42,8 @@ const Admin = () => {
     category: '5 класс',
     type: 'Методичка',
     sample_pdf_url: '',
-    full_pdf_url: ''
+    full_pdf_with_answers_url: '',
+    full_pdf_without_answers_url: ''
   });
 
   useEffect(() => {
@@ -118,7 +120,8 @@ const Admin = () => {
       category: product.category,
       type: product.type,
       sample_pdf_url: product.sample_pdf_url || '',
-      full_pdf_url: product.full_pdf_url || ''
+      full_pdf_with_answers_url: product.full_pdf_with_answers_url || '',
+      full_pdf_without_answers_url: product.full_pdf_without_answers_url || ''
     });
     setIsDialogOpen(true);
   };
@@ -132,7 +135,8 @@ const Admin = () => {
       category: '5 класс',
       type: 'Методичка',
       sample_pdf_url: '',
-      full_pdf_url: ''
+      full_pdf_with_answers_url: '',
+      full_pdf_without_answers_url: ''
     });
   };
 
@@ -262,17 +266,32 @@ const Admin = () => {
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="full_pdf_url">Ссылка на полную версию (обязательно)</Label>
+                    <Label htmlFor="full_pdf_with_answers_url">Ссылка на платный файл с ответами (обязательно)</Label>
                     <Input
-                      id="full_pdf_url"
+                      id="full_pdf_with_answers_url"
                       type="url"
                       placeholder="https://drive.google.com/file/d/..."
-                      value={formData.full_pdf_url}
-                      onChange={(e) => setFormData({ ...formData, full_pdf_url: e.target.value })}
+                      value={formData.full_pdf_with_answers_url}
+                      onChange={(e) => setFormData({ ...formData, full_pdf_with_answers_url: e.target.value })}
                       required
                     />
                     <p className="text-xs text-muted-foreground">
-                      Полная версия — доступна только после оплаты
+                      Платный файл с ответами — доступен только после оплаты
+                    </p>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="full_pdf_without_answers_url">Ссылка на платный файл без ответов (обязательно)</Label>
+                    <Input
+                      id="full_pdf_without_answers_url"
+                      type="url"
+                      placeholder="https://drive.google.com/file/d/..."
+                      value={formData.full_pdf_without_answers_url}
+                      onChange={(e) => setFormData({ ...formData, full_pdf_without_answers_url: e.target.value })}
+                      required
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Платный файл без ответов — доступен только после оплаты
                     </p>
                   </div>
                 </div>
