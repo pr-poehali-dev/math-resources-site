@@ -19,6 +19,7 @@ interface Product {
   category: string;
   type: string;
   sample_pdf_url?: string;
+  full_pdf_url?: string;
 }
 
 const API_URL = 'https://functions.poehali.dev/4350c782-6bfa-4c53-b148-e1f621446eaa';
@@ -39,7 +40,8 @@ const Admin = () => {
     price: '',
     category: '5 класс',
     type: 'Методичка',
-    sample_pdf_url: ''
+    sample_pdf_url: '',
+    full_pdf_url: ''
   });
 
   useEffect(() => {
@@ -115,7 +117,8 @@ const Admin = () => {
       price: product.price.toString(),
       category: product.category,
       type: product.type,
-      sample_pdf_url: product.sample_pdf_url || ''
+      sample_pdf_url: product.sample_pdf_url || '',
+      full_pdf_url: product.full_pdf_url || ''
     });
     setIsDialogOpen(true);
   };
@@ -128,7 +131,8 @@ const Admin = () => {
       price: '',
       category: '5 класс',
       type: 'Методичка',
-      sample_pdf_url: ''
+      sample_pdf_url: '',
+      full_pdf_url: ''
     });
   };
 
@@ -244,7 +248,7 @@ const Admin = () => {
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="sample_pdf_url">Ссылка на PDF-образец (необязательно)</Label>
+                    <Label htmlFor="sample_pdf_url">Ссылка на бесплатный образец (необязательно)</Label>
                     <Input
                       id="sample_pdf_url"
                       type="url"
@@ -253,7 +257,22 @@ const Admin = () => {
                       onChange={(e) => setFormData({ ...formData, sample_pdf_url: e.target.value })}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Загрузите PDF на Google Drive, Dropbox или Яндекс.Диск и вставьте ссылку для скачивания
+                      Бесплатный образец (1-2 листа) — виден всем посетителям
+                    </p>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="full_pdf_url">Ссылка на полную версию (обязательно)</Label>
+                    <Input
+                      id="full_pdf_url"
+                      type="url"
+                      placeholder="https://drive.google.com/file/d/..."
+                      value={formData.full_pdf_url}
+                      onChange={(e) => setFormData({ ...formData, full_pdf_url: e.target.value })}
+                      required
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Полная версия — доступна только после оплаты
                     </p>
                   </div>
                 </div>
