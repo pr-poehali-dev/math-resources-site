@@ -434,9 +434,9 @@ const Index = () => {
                   <Badge variant="outline">{product.type}</Badge>
                 </div>
                 <CardTitle className="text-lg">{product.title}</CardTitle>
-                <CardDescription className="text-sm whitespace-pre-line leading-relaxed space-y-1">
-                  {product.description.split('\n').map((line, i) => (
-                    <div key={i}>{line}</div>
+                <CardDescription className="text-sm leading-relaxed">
+                  {product.description.split('\n').filter(line => line.trim()).map((line, i) => (
+                    <div key={i} className="mb-1">{line}</div>
                   ))}
                 </CardDescription>
               </CardHeader>
