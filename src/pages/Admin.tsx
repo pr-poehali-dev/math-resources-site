@@ -266,32 +266,30 @@ const Admin = () => {
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="full_pdf_with_answers_url">Ссылка на платный файл с ответами (обязательно)</Label>
+                    <Label htmlFor="full_pdf_with_answers_url">Ссылка на файл с ответами (необязательно)</Label>
                     <Input
                       id="full_pdf_with_answers_url"
                       type="url"
                       placeholder="https://drive.google.com/file/d/..."
                       value={formData.full_pdf_with_answers_url}
                       onChange={(e) => setFormData({ ...formData, full_pdf_with_answers_url: e.target.value })}
-                      required
                     />
                     <p className="text-xs text-muted-foreground">
-                      Платный файл с ответами — доступен только после оплаты
+                      Если указано — доступен только после оплаты. Если пусто — товар бесплатный
                     </p>
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="full_pdf_without_answers_url">Ссылка на платный файл без ответов (обязательно)</Label>
+                    <Label htmlFor="full_pdf_without_answers_url">Ссылка на файл без ответов (необязательно)</Label>
                     <Input
                       id="full_pdf_without_answers_url"
                       type="url"
                       placeholder="https://drive.google.com/file/d/..."
                       value={formData.full_pdf_without_answers_url}
                       onChange={(e) => setFormData({ ...formData, full_pdf_without_answers_url: e.target.value })}
-                      required
                     />
                     <p className="text-xs text-muted-foreground">
-                      Платный файл без ответов — доступен только после оплаты
+                      Если указано — доступен только после оплаты. Если пусто — товар бесплатный
                     </p>
                   </div>
                 </div>
