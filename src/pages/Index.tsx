@@ -262,10 +262,23 @@ const Index = () => {
       </main>
 
       <footer className="mt-16 border-t bg-white py-8">
-        <div className="container text-center text-sm text-muted-foreground space-y-2">
-          <p>© 2024 Математическая кухня. Тренажёры и методички по математике</p>
-          <p>ИП Александрова Людмила Геннадьевна</p>
-          <p>ИНН: 820100655703</p>
+        <div className="container text-center text-sm text-muted-foreground space-y-3">
+          <div className="flex justify-center">
+            <a 
+              href="https://vk.com/mk_room" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-primary hover:underline"
+            >
+              <Icon name="MessageCircle" size={18} />
+              Обратная связь ВКонтакте
+            </a>
+          </div>
+          <div className="space-y-1">
+            <p>© 2024 Математическая кухня. Тренажёры и методички по математике</p>
+            <p>ИП Александрова Людмила Геннадьевна</p>
+            <p>ИНН: 820100655703</p>
+          </div>
         </div>
       </footer>
     </div>
