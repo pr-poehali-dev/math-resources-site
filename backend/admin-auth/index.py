@@ -46,17 +46,6 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     body_data = json.loads(event.get('body', '{}'))
     username = body_data.get('username')
     password = body_data.get('password')
-    action = body_data.get('action', 'login')
-    
-    if action == 'create_hash':
-        password_for_hash = body_data.get('password', '')
-        new_hash = bcrypt.hashpw(password_for_hash.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        return {
-            'statusCode': 200,
-            'headers': headers,
-            'body': json.dumps({'password': password_for_hash, 'hash': new_hash}),
-            'isBase64Encoded': False
-        }
     
     if not username or not password:
         return {
