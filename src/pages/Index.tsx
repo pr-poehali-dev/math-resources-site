@@ -370,11 +370,37 @@ const Index = () => {
 
       <footer className="mt-16 border-t bg-white py-8">
         <div className="container text-center text-sm text-muted-foreground space-y-4">
-          <div className="flex justify-center gap-6 items-center">
-            <img src="https://yookassa.ru/files/logo_sbp.svg" alt="СБП" className="h-8" />
-            <img src="https://static.yoomoney.ru/files-front/www/cards-logos/visa.svg" alt="Visa" className="h-6" />
-            <img src="https://static.yoomoney.ru/files-front/www/cards-logos/mastercard.svg" alt="Mastercard" className="h-8" />
-            <img src="https://static.yoomoney.ru/files-front/www/cards-logos/mir.svg" alt="МИР" className="h-6" />
+          <div className="flex justify-center gap-4 items-center flex-wrap">
+            <div className="px-3 py-2 bg-white border rounded flex items-center gap-2">
+              <svg className="h-6" viewBox="0 0 60 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="60" height="24" rx="4" fill="#4B57A5"/>
+                <text x="30" y="15" fontFamily="Arial" fontSize="10" fill="white" textAnchor="middle" fontWeight="bold">СБП</text>
+              </svg>
+              <span className="text-xs font-medium text-foreground">СБП</span>
+            </div>
+            <div className="px-3 py-2 bg-white border rounded flex items-center gap-2">
+              <svg className="h-5" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="48" height="32" fill="white"/>
+                <path d="M18 11L20 21H23L21 11H18Z" fill="#1434CB"/>
+                <path d="M30 11L28 21H31L33 11H30Z" fill="#FAA61A"/>
+              </svg>
+              <span className="text-xs font-medium text-foreground">Visa</span>
+            </div>
+            <div className="px-3 py-2 bg-white border rounded flex items-center gap-2">
+              <svg className="h-5" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="18" cy="16" r="10" fill="#EB001B"/>
+                <circle cx="30" cy="16" r="10" fill="#F79E1B"/>
+              </svg>
+              <span className="text-xs font-medium text-foreground">Mastercard</span>
+            </div>
+            <div className="px-3 py-2 bg-white border rounded flex items-center gap-2">
+              <svg className="h-5" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="48" height="32" fill="white"/>
+                <circle cx="16" cy="16" r="8" fill="#4DB45E"/>
+                <circle cx="32" cy="16" r="8" fill="#0F754E"/>
+              </svg>
+              <span className="text-xs font-medium text-foreground">МИР</span>
+            </div>
           </div>
           <div className="flex justify-center">
             <a 
