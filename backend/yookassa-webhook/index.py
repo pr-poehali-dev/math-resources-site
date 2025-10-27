@@ -8,6 +8,7 @@ import json
 import os
 import psycopg2
 import urllib.request
+import base64
 from typing import Dict, Any
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -49,15 +50,57 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         }
     
     payment_id = payment_obj.get('id')
-    amount = float(payment_obj.get('amount', {}).get('value', 0))
-    customer_email = payment_obj.get('receipt', {}).get('customer', {}).get('email')
-    description = payment_obj.get('description', '')
-    metadata = payment_obj.get('metadata', {})
-    product_ids = metadata.get('product_ids', '')
     
-    print(f'[WEBHOOK] Email: {customer_email}, Product IDs: {product_ids}')
+    if not payment_id:
+        return {
+            'statusCode': 400,
+            'headers': {'Content-Type': 'application/json'},
+            'body': json.dumps({'error': 'Missing payment_id'}),
+            'isBase64Encoded': False
+        }
     
-    if not payment_id or not customer_email:
+    shop_id = os.environ.get('YOOKASSA_SHOP_ID')
+    secret_key = os.environ.get('YOOKASSA_SECRET_KEY')
+    
+    if not shop_id or not secret_key:
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json'},
+            'body': json.dumps({'error': 'YooKassa credentials not configured'}),
+            'isBase64Encoded': False
+        }
+    
+    auth_string = f'{shop_id}:{secret_key}'
+    credentials = base64.b64encode(auth_string.encode('utf-8')).decode('ascii')
+    
+    payment_req = urllib.request.Request(
+        f'https://api.yookassa.ru/v3/payments/{payment_id}',
+        headers={
+            'Authorization': f'Basic {credentials}',
+            'Content-Type': 'application/json'
+        }
+    )
+    
+    try:
+        payment_response = urllib.request.urlopen(payment_req)
+        full_payment_data = json.loads(payment_response.read().decode())
+        print(f'[WEBHOOK] Full payment data from API: {json.dumps(full_payment_data)}')
+        
+        amount = float(full_payment_data.get('amount', {}).get('value', 0))
+        customer_email = full_payment_data.get('receipt', {}).get('customer', {}).get('email')
+        metadata = full_payment_data.get('metadata', {})
+        product_ids = metadata.get('product_ids', '')
+        
+        print(f'[WEBHOOK] Email: {customer_email}, Product IDs from API: {product_ids}')
+    except Exception as e:
+        print(f'[WEBHOOK] Error fetching payment from API: {str(e)}')
+        amount = float(payment_obj.get('amount', {}).get('value', 0))
+        customer_email = payment_obj.get('receipt', {}).get('customer', {}).get('email')
+        metadata = payment_obj.get('metadata', {})
+        product_ids = metadata.get('product_ids', '')
+        print(f'[WEBHOOK] Using webhook data - Email: {customer_email}, Product IDs: {product_ids}')
+    
+    if not customer_email:
         return {
             'statusCode': 400,
             'headers': {'Content-Type': 'application/json'},
