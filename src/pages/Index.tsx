@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,24 +21,33 @@ interface CartItem extends Product {
   quantity: number;
 }
 
-const products: Product[] = [
-  { id: 1, title: 'Методичка "Дроби и проценты"', description: 'Полное руководство по работе с дробями', price: 299, category: '5 класс', type: 'Методичка' },
-  { id: 2, title: 'Тренажёр "Уравнения"', description: '50 задач с решениями', price: 199, category: '6 класс', type: 'Тренажёр' },
-  { id: 3, title: 'Рабочий лист "Геометрия"', description: 'Базовые фигуры и их свойства', price: 149, category: '7 класс', type: 'Рабочий лист' },
-  { id: 4, title: 'Методичка "Квадратные уравнения"', description: 'Теория и практика решения', price: 349, category: '8 класс', type: 'Методичка' },
-  { id: 5, title: 'Тренажёр "Функции"', description: 'Графики и свойства функций', price: 249, category: '9 класс', type: 'Тренажёр' },
-  { id: 6, title: 'Подготовка к ОГЭ', description: 'Комплексный курс подготовки', price: 499, category: 'ОГЭ', type: 'Методичка' },
-  { id: 7, title: 'Методичка "Тригонометрия"', description: 'От основ до сложных задач', price: 399, category: '10 класс', type: 'Методичка' },
-  { id: 8, title: 'Тренажёр "Производные"', description: '100 задач разной сложности', price: 279, category: '11 класс', type: 'Тренажёр' },
-  { id: 9, title: 'Подготовка к ЕГЭ', description: 'Полный курс с разбором типовых заданий', price: 599, category: 'ЕГЭ', type: 'Методичка' },
-];
+const API_URL = 'https://functions.poehali.dev/4350c782-6bfa-4c53-b148-e1f621446eaa';
 
 const categories = ['Все', '5 класс', '6 класс', '7 класс', '8 класс', '9 класс', '10 класс', '11 класс', 'ОГЭ', 'ЕГЭ'];
 
 const Index = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('Все');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      toast.error('Ошибка загрузки товаров');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredProducts = selectedCategory === 'Все' 
     ? products 
@@ -86,8 +96,14 @@ const Index = () => {
             <Icon name="GraduationCap" size={28} className="text-primary" />
             <h1 className="text-2xl font-bold text-foreground">МатМаркет</h1>
           </div>
+
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/admin')}>
+              <Icon name="Settings" size={18} className="mr-2" />
+              Админка
+            </Button>
           
-          <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+            <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="relative">
                 <Icon name="ShoppingCart" size={20} />
@@ -176,6 +192,7 @@ const Index = () => {
               </div>
             </SheetContent>
           </Sheet>
+          </div>
         </div>
       </header>
 
@@ -200,8 +217,14 @@ const Index = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map(product => (
+        {loading ? (
+          <div className="text-center py-12">
+            <Icon name="Loader2" size={48} className="mx-auto mb-4 animate-spin text-primary" />
+            <p className="text-muted-foreground">Загрузка...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProducts.map(product => (
             <Card key={product.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
@@ -220,7 +243,8 @@ const Index = () => {
               </CardFooter>
             </Card>
           ))}
-        </div>
+          </div>
+        )}
       </main>
 
       <footer className="mt-16 border-t bg-white py-8">
