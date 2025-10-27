@@ -38,6 +38,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     notification_type = body_data.get('event')
     payment_obj = body_data.get('object', {})
     
+    print(f'[WEBHOOK] Event: {notification_type}, Payment: {json.dumps(payment_obj)}')
+    
     if notification_type != 'payment.succeeded':
         return {
             'statusCode': 200,
@@ -52,6 +54,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     description = payment_obj.get('description', '')
     metadata = payment_obj.get('metadata', {})
     product_ids = metadata.get('product_ids', '')
+    
+    print(f'[WEBHOOK] Email: {customer_email}, Product IDs: {product_ids}')
     
     if not payment_id or not customer_email:
         return {
