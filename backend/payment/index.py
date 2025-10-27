@@ -43,6 +43,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     description = body_data.get('description', 'Оплата заказа')
     return_url = body_data.get('return_url', '')
     customer_email = body_data.get('customer_email', '')
+    product_ids = body_data.get('product_ids', [])
     
     if not amount or not return_url or not customer_email:
         return {
@@ -99,7 +100,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }]
         },
         'metadata': {
-            'order_id': idempotence_key
+            'order_id': idempotence_key,
+            'product_ids': ','.join(map(str, product_ids)) if product_ids else ''
         }
     }
     

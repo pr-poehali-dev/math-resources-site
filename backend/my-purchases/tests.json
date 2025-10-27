@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "Test get purchases by email",
+      "method": "GET",
+      "path": "/?email=test@example.com",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "purchases": []
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

@@ -49,6 +49,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     amount = float(payment_obj.get('amount', {}).get('value', 0))
     customer_email = payment_obj.get('receipt', {}).get('customer', {}).get('email')
     description = payment_obj.get('description', '')
+    metadata = payment_obj.get('metadata', {})
+    product_ids = metadata.get('product_ids', '')
     
     if not payment_id or not customer_email:
         return {
@@ -76,6 +78,22 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         (customer_email, int(amount), payment_id, 'paid')
     )
     order_id = cur.fetchone()[0]
+    
+    if product_ids:
+        product_id_list = [int(pid) for pid in product_ids.split(',') if pid.strip()]
+        
+        for product_id in product_id_list:
+            cur.execute(
+                "SELECT title, price FROM t_p99209851_math_resources_site.products WHERE id = %s",
+                (product_id,)
+            )
+            product = cur.fetchone()
+            
+            if product:
+                cur.execute(
+                    "INSERT INTO t_p99209851_math_resources_site.order_items (order_id, product_id, product_title, product_price) VALUES (%s, %s, %s, %s)",
+                    (order_id, product_id, product[0], product[1])
+                )
     
     conn.commit()
     cur.close()
