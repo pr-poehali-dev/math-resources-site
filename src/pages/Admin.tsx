@@ -202,8 +202,14 @@ const Admin = () => {
                       id="description"
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Например: 1 стр - кликабельное оглавление, 2-3 стр - теория. 4-5 стр - примеры. 6 стр - задачи на готовых чертежах, 7-8 страница - задания (20 штук), 9 страница - ответы, 10 страница - список литературы."
+                      rows={5}
                       required
+                      className="resize-none"
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Опишите структуру материала — это поможет покупателям понять, что они получат
+                    </p>
                   </div>
 
                   <div className="grid gap-2">

@@ -427,14 +427,16 @@ const Index = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map(product => (
-            <Card key={product.id} className="hover:shadow-lg transition-shadow">
+            <Card key={product.id} className="hover:shadow-lg transition-shadow flex flex-col">
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
                   <Badge variant="secondary">{product.category}</Badge>
                   <Badge variant="outline">{product.type}</Badge>
                 </div>
                 <CardTitle className="text-lg">{product.title}</CardTitle>
-                <CardDescription>{product.description}</CardDescription>
+                <CardDescription className="text-sm whitespace-pre-line leading-relaxed">
+                  {product.description}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {product.sample_pdf_url && product.sample_pdf_url.trim() !== '' && (
