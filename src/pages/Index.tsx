@@ -66,6 +66,7 @@ const Index = () => {
     try {
       const response = await fetch(API_URL);
       const data = await response.json();
+      console.log('Index page - loaded product with id=1:', data.find((p: any) => p.id === 1)?.description);
       setProducts(data);
     } catch (error) {
       toast.error('Ошибка загрузки товаров');
