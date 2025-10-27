@@ -1,0 +1,30 @@
+{
+  "tests": [
+    {
+      "name": "Test payment creation",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "amount": 500,
+        "description": "Test payment",
+        "return_url": "https://example.com/success"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "payment_url": "string",
+        "payment_id": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test missing amount",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "return_url": "https://example.com"
+      },
+      "expectedStatus": 400,
+      "bodyMatcher": "partial"
+    }
+  ]
+}

@@ -89,6 +89,35 @@ const Index = () => {
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  const handlePayment = async () => {
+    if (cart.length === 0) return;
+    
+    try {
+      const orderDescription = cart.map(item => `${item.title} (${item.quantity} шт.)`).join(', ');
+      const returnUrl = window.location.origin + '/';
+      
+      const response = await fetch('https://functions.poehali.dev/c3183bd5-f862-4c83-bf32-b86987ab972c', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: totalPrice,
+          description: orderDescription,
+          return_url: returnUrl
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.payment_url) {
+        window.location.href = data.payment_url;
+      } else {
+        toast.error('Ошибка создания платежа');
+      }
+    } catch (error) {
+      toast.error('Ошибка при оплате');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
@@ -183,10 +212,13 @@ const Index = () => {
                         <span>{totalPrice} ₽</span>
                       </div>
                       
-                      <Button className="w-full" size="lg">
+                      <Button className="w-full" size="lg" onClick={handlePayment}>
                         <Icon name="CreditCard" size={20} className="mr-2" />
                         Оплатить
                       </Button>
+                      <p className="text-xs text-center text-muted-foreground">
+                        Оплата через ЮMoney (СБП, карты)
+                      </p>
                     </div>
                   </>
                 )}
