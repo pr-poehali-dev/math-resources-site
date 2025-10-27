@@ -34,6 +34,7 @@ const Admin = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -297,6 +298,51 @@ const Admin = () => {
                     <p className="text-xs text-muted-foreground">
                       Если указано — доступен только после оплаты. Если пусто — товар бесплатный
                     </p>
+                  </div>
+                  
+                  <div className="border-t pt-4">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={() => setShowPreview(!showPreview)}
+                    >
+                      <Icon name={showPreview ? "EyeOff" : "Eye"} size={18} className="mr-2" />
+                      {showPreview ? 'Скрыть предпросмотр' : 'Показать предпросмотр'}
+                    </Button>
+                    
+                    {showPreview && (
+                      <div className="mt-4 p-4 bg-muted/30 rounded-lg">
+                        <p className="text-xs text-muted-foreground mb-3">Так увидят покупатели:</p>
+                        <Card className="hover:shadow-lg transition-shadow flex flex-col">
+                          <CardHeader>
+                            <div className="flex justify-between items-start mb-2">
+                              <Badge variant="secondary">{formData.category}</Badge>
+                              <Badge variant="outline">{formData.type}</Badge>
+                            </div>
+                            <CardTitle className="text-lg">{formData.title || 'Название товара'}</CardTitle>
+                            <CardDescription className="text-sm whitespace-pre-line leading-relaxed">
+                              {formData.description || 'Описание товара'}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            {formData.sample_pdf_url && (
+                              <div className="flex items-center gap-2 text-sm text-primary">
+                                <Icon name="FileText" size={16} />
+                                Скачать бесплатный образец (PDF)
+                              </div>
+                            )}
+                          </CardContent>
+                          <CardFooter className="flex justify-between items-center">
+                            <p className="text-2xl font-bold">{formData.price || '0'} ₽</p>
+                            <Button>
+                              <Icon name="ShoppingCart" size={18} className="mr-2" />
+                              В корзину
+                            </Button>
+                          </CardFooter>
+                        </Card>
+                      </div>
+                    )}
                   </div>
                 </div>
 
