@@ -322,8 +322,8 @@ const Admin = () => {
                             </div>
                             <CardTitle className="text-lg">{formData.title || 'Название товара'}</CardTitle>
                             <CardDescription className="text-sm leading-relaxed">
-                              {(formData.description || 'Описание товара').split('\n').filter(line => line.trim()).map((line, i) => (
-                                <div key={i} className="mb-1">{line}</div>
+                              {(formData.description || 'Описание товара').split('\n').map((line, i) => (
+                                <div key={i} className={line.trim() ? "mb-1" : "mb-2"}>{line || '\u00A0'}</div>
                               ))}
                             </CardDescription>
                           </CardHeader>
