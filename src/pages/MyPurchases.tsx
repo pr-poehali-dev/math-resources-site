@@ -33,11 +33,17 @@ const MyPurchases = () => {
 
   const loadPurchases = async () => {
     try {
-      // TODO: Создать backend функцию для загрузки покупок
-      // Пока показываем пустой список
-      setPurchases([]);
+      const response = await fetch(`https://functions.poehali.dev/3a1ed603-9a84-4270-a759-a900fcc8d5b3?email=${encodeURIComponent(userEmail || '')}`);
+      const data = await response.json();
+      
+      if (response.ok && data.purchases) {
+        setPurchases(data.purchases);
+      } else {
+        setPurchases([]);
+      }
     } catch (error) {
       toast.error('Ошибка загрузки покупок');
+      setPurchases([]);
     } finally {
       setLoading(false);
     }

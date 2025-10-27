@@ -1,4 +1,6 @@
 {
+  "send-purchase-email": "https://functions.poehali.dev/fa6783b1-aae1-4057-8f19-8f9ccb0665f1",
+  "my-purchases": "https://functions.poehali.dev/3a1ed603-9a84-4270-a759-a900fcc8d5b3",
   "yookassa-webhook": "https://functions.poehali.dev/12ec2917-d90f-4d0c-9e80-1b0bdcf79273",
   "user-auth": "https://functions.poehali.dev/952cea32-e71e-48d7-8465-264417100e39",
   "payment": "https://functions.poehali.dev/c3183bd5-f862-4c83-bf32-b86987ab972c",

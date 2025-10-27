@@ -1,0 +1,15 @@
+{
+  "tests": [
+    {
+      "name": "Test missing parameters",
+      "method": "POST",
+      "path": "/",
+      "body": {},
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Missing customer_email or order_id"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

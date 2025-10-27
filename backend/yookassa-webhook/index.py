@@ -7,6 +7,7 @@ Returns: HTTP response 200 для подтверждения получения 
 import json
 import os
 import psycopg2
+import urllib.request
 from typing import Dict, Any
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -98,6 +99,22 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     conn.commit()
     cur.close()
     conn.close()
+    
+    email_payload = json.dumps({
+        'customer_email': customer_email,
+        'order_id': order_id
+    }).encode()
+    
+    email_req = urllib.request.Request(
+        'https://functions.poehali.dev/send-purchase-email',
+        data=email_payload,
+        headers={'Content-Type': 'application/json'}
+    )
+    
+    try:
+        urllib.request.urlopen(email_req)
+    except Exception:
+        pass
     
     return {
         'statusCode': 200,

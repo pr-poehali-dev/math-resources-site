@@ -114,6 +114,8 @@ const Index = () => {
       const orderDescription = cart.map(item => `${item.title} (${item.quantity} шт.)`).join(', ');
       const returnUrl = window.location.origin + '/';
       
+      const productIds = cart.map(item => item.id);
+      
       const response = await fetch('https://functions.poehali.dev/c3183bd5-f862-4c83-bf32-b86987ab972c', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -121,7 +123,8 @@ const Index = () => {
           amount: totalPrice,
           description: orderDescription,
           return_url: returnUrl,
-          customer_email: guestEmail
+          customer_email: guestEmail,
+          product_ids: productIds
         })
       });
       
@@ -164,6 +167,7 @@ const Index = () => {
         
         const orderDescription = cart.map(item => `${item.title} (${item.quantity} шт.)`).join(', ');
         const returnUrl = window.location.origin + '/my-purchases';
+        const productIds = cart.map(item => item.id);
         
         const response = await fetch('https://functions.poehali.dev/c3183bd5-f862-4c83-bf32-b86987ab972c', {
           method: 'POST',
@@ -172,7 +176,8 @@ const Index = () => {
             amount: totalPrice,
             description: orderDescription,
             return_url: returnUrl,
-            customer_email: registerEmail
+            customer_email: registerEmail,
+            product_ids: productIds
           })
         });
         
