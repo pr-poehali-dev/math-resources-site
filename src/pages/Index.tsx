@@ -4,6 +4,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
@@ -31,8 +35,14 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState('Все');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [guestEmail, setGuestEmail] = useState('');
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
+  const [registerName, setRegisterName] = useState('');
 
   useEffect(() => {
     loadProducts();
@@ -89,9 +99,15 @@ const Index = () => {
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const handlePayment = async () => {
-    if (cart.length === 0) return;
+  const openCheckout = () => {
+    setIsCartOpen(false);
+    setIsCheckoutOpen(true);
+  };
+
+  const handleGuestCheckout = async () => {
+    if (!guestEmail || cart.length === 0) return;
     
+    setCheckoutLoading(true);
     try {
       const orderDescription = cart.map(item => `${item.title} (${item.quantity} шт.)`).join(', ');
       const returnUrl = window.location.origin + '/';
@@ -109,12 +125,68 @@ const Index = () => {
       const data = await response.json();
       
       if (data.payment_url) {
+        localStorage.setItem('pending_order', JSON.stringify({ cart, email: guestEmail }));
         window.location.href = data.payment_url;
       } else {
         toast.error('Ошибка создания платежа');
       }
     } catch (error) {
       toast.error('Ошибка при оплате');
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
+  const handleRegisterCheckout = async () => {
+    if (!registerEmail || !registerPassword || cart.length === 0) return;
+    
+    setCheckoutLoading(true);
+    try {
+      const authResponse = await fetch('https://functions.poehali.dev/952cea32-e71e-48d7-8465-264417100e39', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'register',
+          email: registerEmail,
+          password: registerPassword,
+          full_name: registerName
+        })
+      });
+      
+      const authData = await authResponse.json();
+      
+      if (authResponse.ok && authData.token) {
+        localStorage.setItem('user_token', authData.token);
+        localStorage.setItem('user_email', authData.email);
+        
+        const orderDescription = cart.map(item => `${item.title} (${item.quantity} шт.)`).join(', ');
+        const returnUrl = window.location.origin + '/my-purchases';
+        
+        const response = await fetch('https://functions.poehali.dev/c3183bd5-f862-4c83-bf32-b86987ab972c', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: totalPrice,
+            description: orderDescription,
+            return_url: returnUrl
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.payment_url) {
+          localStorage.setItem('pending_order', JSON.stringify({ cart, user_id: authData.user_id }));
+          window.location.href = data.payment_url;
+        } else {
+          toast.error('Ошибка создания платежа');
+        }
+      } else {
+        toast.error(authData.error || 'Ошибка регистрации');
+      }
+    } catch (error) {
+      toast.error('Ошибка при оформлении');
+    } finally {
+      setCheckoutLoading(false);
     }
   };
 
@@ -212,13 +284,10 @@ const Index = () => {
                         <span>{totalPrice} ₽</span>
                       </div>
                       
-                      <Button className="w-full" size="lg" onClick={handlePayment}>
+                      <Button className="w-full" size="lg" onClick={openCheckout}>
                         <Icon name="CreditCard" size={20} className="mr-2" />
-                        Оплатить
+                        Оформить заказ
                       </Button>
-                      <p className="text-xs text-center text-muted-foreground">
-                        Оплата через ЮMoney (СБП, карты)
-                      </p>
                     </div>
                   </>
                 )}
@@ -313,6 +382,97 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      <Dialog open={isCheckoutOpen} onOpenChange={setIsCheckoutOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Оформление заказа</DialogTitle>
+            <DialogDescription>
+              Сумма к оплате: {totalPrice} ₽
+            </DialogDescription>
+          </DialogHeader>
+
+          <Tabs defaultValue="guest" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="guest">Без регистрации</TabsTrigger>
+              <TabsTrigger value="register">С аккаунтом</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="guest" className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="guest-email">Email для получения материалов</Label>
+                <Input
+                  id="guest-email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={guestEmail}
+                  onChange={(e) => setGuestEmail(e.target.value)}
+                  required
+                />
+                <p className="text-xs text-muted-foreground">
+                  После оплаты материалы придут на этот email
+                </p>
+              </div>
+
+              <Button 
+                className="w-full" 
+                onClick={handleGuestCheckout}
+                disabled={checkoutLoading || !guestEmail}
+              >
+                {checkoutLoading ? 'Обработка...' : 'Перейти к оплате'}
+              </Button>
+            </TabsContent>
+
+            <TabsContent value="register" className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="register-name">Имя (необязательно)</Label>
+                <Input
+                  id="register-name"
+                  placeholder="Ваше имя"
+                  value={registerName}
+                  onChange={(e) => setRegisterName(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="register-email">Email</Label>
+                <Input
+                  id="register-email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={registerEmail}
+                  onChange={(e) => setRegisterEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="register-password">Пароль</Label>
+                <Input
+                  id="register-password"
+                  type="password"
+                  placeholder="Минимум 6 символов"
+                  value={registerPassword}
+                  onChange={(e) => setRegisterPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Создайте аккаунт — все покупки сохранятся в разделе "Мои покупки"
+              </p>
+
+              <Button 
+                className="w-full" 
+                onClick={handleRegisterCheckout}
+                disabled={checkoutLoading || !registerEmail || !registerPassword}
+              >
+                {checkoutLoading ? 'Обработка...' : 'Создать аккаунт и оплатить'}
+              </Button>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
