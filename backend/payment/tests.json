@@ -7,7 +7,8 @@
       "body": {
         "amount": 500,
         "description": "Test payment",
-        "return_url": "https://example.com/success"
+        "return_url": "https://example.com/success",
+        "customer_email": "test@example.com"
       },
       "expectedStatus": 200,
       "expectedBody": {

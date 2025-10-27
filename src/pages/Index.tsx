@@ -120,7 +120,8 @@ const Index = () => {
         body: JSON.stringify({
           amount: totalPrice,
           description: orderDescription,
-          return_url: returnUrl
+          return_url: returnUrl,
+          customer_email: guestEmail
         })
       });
       
@@ -170,7 +171,8 @@ const Index = () => {
           body: JSON.stringify({
             amount: totalPrice,
             description: orderDescription,
-            return_url: returnUrl
+            return_url: returnUrl,
+            customer_email: registerEmail
           })
         });
         

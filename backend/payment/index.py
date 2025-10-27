@@ -42,15 +42,16 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     amount = body_data.get('amount')
     description = body_data.get('description', 'Оплата заказа')
     return_url = body_data.get('return_url', '')
+    customer_email = body_data.get('customer_email', '')
     
-    if not amount or not return_url:
+    if not amount or not return_url or not customer_email:
         return {
             'statusCode': 400,
             'headers': {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
-            'body': json.dumps({'error': 'Missing amount or return_url'}),
+            'body': json.dumps({'error': 'Missing amount, return_url or customer_email'}),
             'isBase64Encoded': False
         }
     
@@ -81,6 +82,22 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         },
         'capture': True,
         'description': description,
+        'receipt': {
+            'customer': {
+                'email': customer_email
+            },
+            'items': [{
+                'description': description,
+                'quantity': '1',
+                'amount': {
+                    'value': str(amount) if '.' in str(amount) else f'{float(amount):.2f}',
+                    'currency': 'RUB'
+                },
+                'vat_code': 1,
+                'payment_mode': 'full_payment',
+                'payment_subject': 'commodity'
+            }]
+        },
         'metadata': {
             'order_id': idempotence_key
         }
