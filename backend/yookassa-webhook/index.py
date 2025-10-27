@@ -87,16 +87,16 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         print(f'[WEBHOOK] Full payment data from API: {json.dumps(full_payment_data)}')
         
         amount = float(full_payment_data.get('amount', {}).get('value', 0))
-        customer_email = full_payment_data.get('receipt', {}).get('customer', {}).get('email')
         metadata = full_payment_data.get('metadata', {})
+        customer_email = metadata.get('customer_email') or full_payment_data.get('receipt', {}).get('customer', {}).get('email')
         product_ids = metadata.get('product_ids', '')
         
         print(f'[WEBHOOK] Email: {customer_email}, Product IDs from API: {product_ids}')
     except Exception as e:
         print(f'[WEBHOOK] Error fetching payment from API: {str(e)}')
         amount = float(payment_obj.get('amount', {}).get('value', 0))
-        customer_email = payment_obj.get('receipt', {}).get('customer', {}).get('email')
         metadata = payment_obj.get('metadata', {})
+        customer_email = metadata.get('customer_email') or payment_obj.get('receipt', {}).get('customer', {}).get('email')
         product_ids = metadata.get('product_ids', '')
         print(f'[WEBHOOK] Using webhook data - Email: {customer_email}, Product IDs: {product_ids}')
     

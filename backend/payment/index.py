@@ -101,7 +101,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         },
         'metadata': {
             'order_id': idempotence_key,
-            'product_ids': ','.join(map(str, product_ids)) if product_ids else ''
+            'product_ids': ','.join(map(str, product_ids)) if product_ids else '',
+            'customer_email': customer_email
         }
     }
     
