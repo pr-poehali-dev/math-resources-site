@@ -69,9 +69,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     # Create order items
     for product in products:
         cur.execute(
-            "INSERT INTO t_p99209851_math_resources_site.order_items (order_id, product_id, quantity, price) "
-            "VALUES (%s, %s, %s, %s)",
-            (order_id, product[0], 1, amount)
+            "INSERT INTO t_p99209851_math_resources_site.order_items (order_id, product_id, product_title, product_price, full_pdf_url, quantity) "
+            "VALUES (%s, %s, %s, %s, %s, %s)",
+            (order_id, product[0], product[1], int(amount), product[2], 1)
         )
     
     conn.commit()
