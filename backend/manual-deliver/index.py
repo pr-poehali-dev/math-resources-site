@@ -62,7 +62,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     # Get products
     product_ids_str = ','.join(map(str, product_ids))
     cur.execute(
-        f"SELECT id, title, file_url FROM t_p99209851_math_resources_site.products WHERE id IN ({product_ids_str})"
+        f"SELECT id, title, full_pdf_url, full_pdf_with_answers_url FROM t_p99209851_math_resources_site.products WHERE id IN ({product_ids_str})"
     )
     products = cur.fetchall()
     
@@ -87,7 +87,15 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     msg['From'] = smtp_user
     msg['To'] = email
     
-    product_links = '\n'.join([f'• {p[1]}: {p[2]}' for p in products])
+    product_lines = []
+    for p in products:
+        product_lines.append(f'• {p[1]}:')
+        if p[2]:
+            product_lines.append(f'  - Полный файл: {p[2]}')
+        if p[3]:
+            product_lines.append(f'  - С ответами: {p[3]}')
+    
+    product_links = '\n'.join(product_lines)
     
     text = f'''
 Здравствуйте!
