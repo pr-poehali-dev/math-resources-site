@@ -35,6 +35,7 @@ const categories = ['Все', '5 класс', '6 класс', '7 класс', '8
 const Index = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('Все');
+  const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -73,9 +74,9 @@ const Index = () => {
     }
   };
 
-  const filteredProducts = selectedCategory === 'Все' 
-    ? products 
-    : products.filter(p => p.category === selectedCategory);
+  const filteredProducts = products
+    .filter(p => selectedCategory === 'Все' || p.category === selectedCategory)
+    .filter(p => searchQuery === '' || p.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const addToCart = (product: Product) => {
     setCart(prev => {
@@ -337,6 +338,19 @@ const Index = () => {
             Методички, рабочие листы и тренажёры для 5–11 классов, подготовка к ОГЭ и ЕГЭ
           </p>
         </section>
+
+        <div className="mb-6 flex justify-center">
+          <div className="relative max-w-md w-full">
+            <Icon name="Search" size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Поиск по названию материала..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
 
         <div className="mb-8 flex flex-wrap gap-2 justify-center">
           {categories.map(category => (
