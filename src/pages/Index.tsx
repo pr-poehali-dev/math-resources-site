@@ -110,8 +110,12 @@ const Index = () => {
     });
   };
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const hasDiscount = totalItems >= 10;
+  const discountPercent = 15;
+  const discountAmount = hasDiscount ? Math.round(subtotal * discountPercent / 100) : 0;
+  const totalPrice = subtotal - discountAmount;
 
   const openCheckout = () => {
     setIsCartOpen(false);
@@ -213,6 +217,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <div className="bg-primary text-primary-foreground py-2 text-center text-sm font-medium">
+        🎉 Скидка 15% при покупке от 10 материалов!
+      </div>
+      
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
@@ -311,17 +319,52 @@ const Index = () => {
                     
                     <Separator className="my-6" />
                     
-                    <div className="space-y-4">
+                    {!hasDiscount && totalItems > 0 && totalItems < 10 && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-900">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Icon name="Tag" size={16} />
+                          <span className="font-semibold">Добавьте ещё {10 - totalItems} {(10 - totalItems) === 1 ? 'товар' : 'товара'} для скидки 15%</span>
+                        </div>
+                        <div className="w-full bg-blue-200 rounded-full h-2 mt-2">
+                          <div 
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${(totalItems / 10) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    
+                    {hasDiscount && (
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-900">
+                        <div className="flex items-center gap-2">
+                          <Icon name="Check" size={16} />
+                          <span className="font-semibold">🎉 Скидка 15% активирована!</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Сумма:</span>
+                        <span>{subtotal} ₽</span>
+                      </div>
+                      {hasDiscount && (
+                        <div className="flex justify-between text-sm text-green-600 font-medium">
+                          <span>Скидка 15%:</span>
+                          <span>-{discountAmount} ₽</span>
+                        </div>
+                      )}
+                      <Separator />
                       <div className="flex justify-between items-center text-lg font-bold">
                         <span>Итого:</span>
                         <span>{totalPrice} ₽</span>
                       </div>
-                      
-                      <Button className="w-full" size="lg" onClick={openCheckout}>
-                        <Icon name="CreditCard" size={20} className="mr-2" />
-                        Оформить заказ
-                      </Button>
                     </div>
+                    
+                    <Button className="w-full" size="lg" onClick={openCheckout}>
+                      <Icon name="CreditCard" size={20} className="mr-2" />
+                      Оформить заказ
+                    </Button>
                   </>
                 )}
               </div>
