@@ -1,20 +1,19 @@
 '''
-Business: Создание платежа через ЮMoney API для оплаты товаров
+Business: Создание платежа через ЮКасса API для оплаты товаров
 Args: event - dict с httpMethod, body (amount, description, return_url)
       context - object с request_id
-Returns: HTTP response с payment_url для перенаправления на оплату
+Returns: HTTP response с payment_url и confirmation_token для оплаты
 '''
 import json
 import os
 import uuid
+import base64
 from typing import Dict, Any
-from urllib.parse import urlencode
 import urllib.request
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     method: str = event.get('httpMethod', 'GET')
     
-    # Handle CORS OPTIONS request
     if method == 'OPTIONS':
         return {
             'statusCode': 200,
@@ -55,41 +54,78 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'isBase64Encoded': False
         }
     
-    client_id = os.environ.get('YOOMONEY_CLIENT_ID')
+    shop_id = os.environ.get('YOOKASSA_SHOP_ID')
+    secret_key = os.environ.get('YOOKASSA_SECRET_KEY')
     
-    if not client_id:
+    if not shop_id or not secret_key:
         return {
             'statusCode': 500,
             'headers': {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
-            'body': json.dumps({'error': 'YooMoney credentials not configured'}),
+            'body': json.dumps({'error': 'YooKassa credentials not configured'}),
             'isBase64Encoded': False
         }
     
-    # Создаем URL для оплаты через форму ЮMoney
-    payment_params = {
-        'receiver': client_id,
-        'quickpay-form': 'shop',
-        'targets': description,
-        'paymentType': 'SB',  # СБП по умолчанию
-        'sum': str(amount),
-        'successURL': return_url,
-        'label': str(uuid.uuid4())  # Уникальный ID платежа
-    }
+    idempotence_key = str(uuid.uuid4())
     
-    payment_url = f"https://yoomoney.ru/quickpay/confirm.xml?{urlencode(payment_params)}"
-    
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+    payment_data = {
+        'amount': {
+            'value': str(amount) if '.' in str(amount) else f'{float(amount):.2f}',
+            'currency': 'RUB'
         },
-        'body': json.dumps({
-            'payment_url': payment_url,
-            'payment_id': payment_params['label']
-        }),
-        'isBase64Encoded': False
+        'confirmation': {
+            'type': 'redirect',
+            'return_url': return_url
+        },
+        'capture': True,
+        'description': description,
+        'metadata': {
+            'order_id': idempotence_key
+        }
     }
+    
+    auth_string = f'{shop_id}:{secret_key}'
+    credentials = base64.b64encode(auth_string.encode('utf-8')).decode('ascii')
+    
+    req = urllib.request.Request(
+        'https://api.yookassa.ru/v3/payments',
+        data=json.dumps(payment_data).encode(),
+        headers={
+            'Authorization': f'Basic {credentials}',
+            'Idempotence-Key': idempotence_key,
+            'Content-Type': 'application/json'
+        }
+    )
+    
+    try:
+        response = urllib.request.urlopen(req)
+        response_data = json.loads(response.read().decode())
+        
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({
+                'payment_url': response_data['confirmation']['confirmation_url'],
+                'payment_id': response_data['id']
+            }),
+            'isBase64Encoded': False
+        }
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode()
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({
+                'error': 'YooKassa API error',
+                'details': error_body
+            }),
+            'isBase64Encoded': False
+        }
