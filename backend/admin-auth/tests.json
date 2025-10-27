@@ -1,0 +1,41 @@
+{
+  "tests": [
+    {
+      "name": "Valid admin login",
+      "method": "POST",
+      "body": {
+        "username": "alexam",
+        "password": "Fynbdbhec23@79"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "token": "string",
+        "username": "alexam"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Invalid credentials",
+      "method": "POST",
+      "body": {
+        "username": "wronguser",
+        "password": "wrongpass"
+      },
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "Invalid credentials"
+      }
+    },
+    {
+      "name": "Missing password",
+      "method": "POST",
+      "body": {
+        "username": "alexam"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Username and password required"
+      }
+    }
+  ]
+}
