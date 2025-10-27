@@ -284,7 +284,7 @@ const Index = () => {
                         <span>{totalPrice} ₽</span>
                       </div>
                       
-                      <Button className="w-full" size="lg" onClick={openCheckout}>
+                      <Button className="w-full bg-teal-400 hover:bg-teal-500 text-white" size="lg" onClick={openCheckout}>
                         <Icon name="CreditCard" size={20} className="mr-2" />
                         Оформить заказ
                       </Button>
@@ -418,7 +418,7 @@ const Index = () => {
               </div>
 
               <Button 
-                className="w-full" 
+                className="w-full bg-teal-400 hover:bg-teal-500 text-white" 
                 onClick={handleGuestCheckout}
                 disabled={checkoutLoading || !guestEmail}
               >
@@ -466,7 +466,7 @@ const Index = () => {
               </p>
 
               <Button 
-                className="w-full" 
+                className="w-full bg-teal-400 hover:bg-teal-500 text-white" 
                 onClick={handleRegisterCheckout}
                 disabled={checkoutLoading || !registerEmail || !registerPassword}
               >

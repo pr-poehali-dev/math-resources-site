@@ -85,7 +85,7 @@ const MyPurchases = () => {
             <p className="text-muted-foreground mb-6">
               Купленные материалы появятся здесь после оплаты
             </p>
-            <Button onClick={() => navigate('/')}>
+            <Button onClick={() => navigate('/')} className="bg-teal-400 hover:bg-teal-500 text-white">
               <Icon name="ArrowLeft" size={18} className="mr-2" />
               Вернуться к каталогу
             </Button>
@@ -117,7 +117,7 @@ const MyPurchases = () => {
                           rel="noopener noreferrer"
                           className="block"
                         >
-                          <Button className="w-full" variant="default">
+                          <Button className="w-full bg-teal-400 hover:bg-teal-500 text-white">
                             <Icon name="Download" size={18} className="mr-2" />
                             Скачать с ответами
                           </Button>
