@@ -88,12 +88,31 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'isBase64Encoded': False
         }
     
-    html_body = """
+    text_body = f"Здравствуйте!\n\nВаш заказ №{order_id} готов.\n\nМатериалы для скачивания:\n\n"
+    
+    for item in items:
+        product_title = item[0]
+        url_with_answers = item[1]
+        url_without_answers = item[2]
+        
+        text_body += f"{product_title}\n"
+        if url_with_answers:
+            text_body += f"С ответами: {url_with_answers}\n"
+        if url_without_answers:
+            text_body += f"Без ответов: {url_without_answers}\n"
+        text_body += "\n"
+    
+    text_body += "Если возникнут вопросы, отвечайте на это письмо.\n\nС уважением"
+    
+    html_body = f"""
     <html>
-    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #2563eb;">Спасибо за покупку! 🎉</h2>
-            <p>Ваш заказ успешно оплачен. Ниже ссылки для скачивания материалов:</p>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+            <h2 style="color: #2563eb; margin-bottom: 20px;">Заказ №{order_id} готов</h2>
+            <p style="margin-bottom: 20px;">Здравствуйте! Материалы готовы к скачиванию.</p>
             
             <div style="margin: 20px 0;">
     """
@@ -127,10 +146,12 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
     
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = 'Ваши материалы готовы к скачиванию'
+    msg['Subject'] = f'Заказ №{order_id}'
     msg['From'] = smtp_user
     msg['To'] = customer_email
+    msg['Reply-To'] = smtp_user
     
+    msg.attach(MIMEText(text_body, 'plain', 'utf-8'))
     msg.attach(MIMEText(html_body, 'html', 'utf-8'))
     
     server = smtplib.SMTP(smtp_host, smtp_port)
