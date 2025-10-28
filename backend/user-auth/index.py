@@ -62,7 +62,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     
     try:
         if action == 'register':
-            cur.execute('SELECT id FROM users WHERE email = %s', (email,))
+            cur.execute('SELECT id FROM t_p99209851_math_resources_site.users WHERE email = %s', (email,))
             if cur.fetchone():
                 return {
                     'statusCode': 400,
@@ -74,7 +74,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             
             cur.execute(
-                'INSERT INTO users (email, password_hash, full_name) VALUES (%s, %s, %s) RETURNING id',
+                'INSERT INTO t_p99209851_math_resources_site.users (email, password_hash, full_name) VALUES (%s, %s, %s) RETURNING id',
                 (email, password_hash, full_name)
             )
             user_id = cur.fetchone()[0]
@@ -98,7 +98,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         elif action == 'login':
-            cur.execute('SELECT id, password_hash, full_name FROM users WHERE email = %s', (email,))
+            cur.execute('SELECT id, password_hash, full_name FROM t_p99209851_math_resources_site.users WHERE email = %s', (email,))
             row = cur.fetchone()
             
             if not row:
