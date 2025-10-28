@@ -47,49 +47,35 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     conn = psycopg2.connect(dsn)
     cur = conn.cursor()
     
-    cur.execute("""
-        SELECT 
-            o.id,
-            o.guest_email,
-            o.total_price,
-            o.payment_status,
-            o.created_at,
-            oi.product_id,
-            p.title,
-            oi.quantity,
-            oi.price
-        FROM orders o
-        LEFT JOIN order_items oi ON oi.order_id = o.id
-        LEFT JOIN products p ON p.id = oi.product_id
-        ORDER BY o.created_at DESC
-    """)
+    cur.execute("SELECT id, guest_email, total_price, payment_status, created_at FROM orders ORDER BY created_at DESC")
     
-    rows = cur.fetchall()
+    orders_rows = cur.fetchall()
     
-    orders_dict: Dict[int, Dict[str, Any]] = {}
+    orders: List[Dict[str, Any]] = []
     
-    for row in rows:
-        order_id = row[0]
+    for order_row in orders_rows:
+        order_id = order_row[0]
         
-        if order_id not in orders_dict:
-            orders_dict[order_id] = {
-                'id': order_id,
-                'guest_email': row[1],
-                'total_price': row[2],
-                'payment_status': row[3],
-                'created_at': row[4].isoformat() if row[4] else None,
-                'items': []
-            }
+        cur.execute(f"SELECT oi.product_id, p.title, oi.quantity, oi.price FROM order_items oi LEFT JOIN products p ON p.id = oi.product_id WHERE oi.order_id = {order_id}")
+        items_rows = cur.fetchall()
         
-        if row[5] is not None:
-            orders_dict[order_id]['items'].append({
-                'product_id': row[5],
-                'product_title': row[6],
-                'quantity': row[7],
-                'price': row[8]
+        items = []
+        for item_row in items_rows:
+            items.append({
+                'product_id': item_row[0],
+                'product_title': item_row[1],
+                'quantity': item_row[2],
+                'price': item_row[3]
             })
-    
-    orders: List[Dict[str, Any]] = list(orders_dict.values())
+        
+        orders.append({
+            'id': order_id,
+            'guest_email': order_row[1],
+            'total_price': order_row[2],
+            'payment_status': order_row[3],
+            'created_at': order_row[4].isoformat() if order_row[4] else None,
+            'items': items
+        })
     
     cur.close()
     conn.close()
