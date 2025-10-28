@@ -60,6 +60,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     cur.execute("""
         SELECT 
             oi.id,
+            oi.product_id,
             oi.product_title,
             oi.product_price,
             p.full_pdf_with_answers_url,
@@ -78,11 +79,12 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     for row in rows:
         purchases.append({
             'id': row[0],
-            'product_title': row[1],
-            'product_price': row[2],
-            'full_pdf_with_answers_url': row[3] or '',
-            'full_pdf_without_answers_url': row[4] or '',
-            'created_at': row[5].isoformat() if row[5] else ''
+            'product_id': row[1],
+            'product_title': row[2],
+            'product_price': row[3],
+            'full_pdf_with_answers_url': row[4] or '',
+            'full_pdf_without_answers_url': row[5] or '',
+            'created_at': row[6].isoformat() if row[6] else ''
         })
     
     cur.close()
