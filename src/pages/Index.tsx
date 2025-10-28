@@ -123,20 +123,8 @@ const Index = () => {
     toast.info('Товар удалён из корзины');
   };
 
-  const updateQuantity = (id: number, delta: number) => {
-    setCart(prev => {
-      return prev.map(item => {
-        if (item.id === id) {
-          const newQuantity = item.quantity + delta;
-          return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
-        }
-        return item;
-      }).filter(item => item.quantity > 0);
-    });
-  };
-
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalItems = cart.length;
+  const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
   const hasDiscount = totalItems >= 10;
   const discountPercent = 15;
   const discountAmount = hasDiscount ? Math.round(subtotal * discountPercent / 100) : 0;
@@ -372,26 +360,8 @@ const Index = () => {
                           </div>
                           
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <Button 
-                                variant="outline" 
-                                size="icon" 
-                                className="h-8 w-8"
-                                onClick={() => updateQuantity(item.id, -1)}
-                              >
-                                <Icon name="Minus" size={14} />
-                              </Button>
-                              <span className="w-8 text-center font-medium">{item.quantity}</span>
-                              <Button 
-                                variant="outline" 
-                                size="icon" 
-                                className="h-8 w-8"
-                                onClick={() => updateQuantity(item.id, 1)}
-                              >
-                                <Icon name="Plus" size={14} />
-                              </Button>
-                            </div>
-                            <p className="font-bold">{item.price * item.quantity} ₽</p>
+                            <Badge variant="outline">1 шт.</Badge>
+                            <p className="font-bold">{item.price} ₽</p>
                           </div>
                         </CardContent>
                       </Card>
