@@ -537,7 +537,16 @@ const Index = () => {
               <span className="text-xs font-medium text-foreground">МИР</span>
             </div>
           </div>
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <a 
+              href="https://preview--math-resources-site.poehali.dev/forgot-password" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
+            >
+              <Icon name="KeyRound" size={18} />
+              Восстановить пароль
+            </a>
             <a 
               href="https://vk.com/mk_room" 
               target="_blank" 
