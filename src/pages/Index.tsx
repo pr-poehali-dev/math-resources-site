@@ -624,6 +624,15 @@ const Index = () => {
               >
                 Войти
               </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full text-xs text-muted-foreground"
+                onClick={() => navigate('/forgot-password')}
+              >
+                Забыли пароль?
+              </Button>
             </TabsContent>
 
             <TabsContent value="register" className="space-y-4">
