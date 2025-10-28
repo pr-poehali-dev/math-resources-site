@@ -27,7 +27,7 @@ interface Product {
 const API_URL = 'https://functions.poehali.dev/4350c782-6bfa-4c53-b148-e1f621446eaa';
 
 const categories = ['5 класс', '6 класс', '7 класс', '8 класс', '9 класс', '10 класс', '11 класс', 'ОГЭ', 'ЕГЭ'];
-const types = ['Методичка', 'Тренажёр', 'Рабочий лист'];
+const types = ['Методичка', 'Тренажёр', 'Рабочий лист', 'Презентация'];
 
 const Admin = () => {
   const navigate = useNavigate();
