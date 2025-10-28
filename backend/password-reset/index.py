@@ -81,33 +81,50 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             reset_url = f"{os.environ.get('FRONTEND_URL', 'https://mk-room.ru')}/reset-password?token={token}"
             
-            send_email_function_url = 'https://functions.poehali.dev/4acdc478-3ce3-4267-92ea-bf6b79e2fffd'
+            smtp_host = os.environ.get('SMTP_HOST')
+            smtp_port = int(os.environ.get('SMTP_PORT', '587'))
+            smtp_user = os.environ.get('SMTP_USER')
+            smtp_password = os.environ.get('SMTP_PASSWORD')
             
-            import urllib.request
-            email_body = {
-                'to_email': email,
-                'subject': 'Восстановление пароля',
-                'html': f'''
-                <h2>Восстановление пароля</h2>
-                <p>Вы запросили сброс пароля для вашего аккаунта.</p>
-                <p>Перейдите по ссылке для создания нового пароля:</p>
-                <p><a href="{reset_url}">Сбросить пароль</a></p>
-                <p>Ссылка действительна 1 час.</p>
-                <p>Если вы не запрашивали сброс пароля, проигнорируйте это письмо.</p>
+            if all([smtp_host, smtp_user, smtp_password]):
+                import smtplib
+                from email.mime.text import MIMEText
+                from email.mime.multipart import MIMEMultipart
+                
+                html_body = f'''
+                <html>
+                <head><meta charset="utf-8"></head>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+                    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+                        <h2 style="color: #2563eb; margin-bottom: 20px;">Восстановление пароля</h2>
+                        <p style="margin-bottom: 20px;">Вы запросили сброс пароля для вашего аккаунта.</p>
+                        <p style="margin-bottom: 20px;">Перейдите по ссылке для создания нового пароля:</p>
+                        <p style="margin-bottom: 20px;">
+                            <a href="{reset_url}" style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 6px;">Сбросить пароль</a>
+                        </p>
+                        <p style="font-size: 14px; color: #6b7280;">Ссылка действительна 1 час.</p>
+                        <p style="font-size: 14px; color: #6b7280;">Если вы не запрашивали сброс пароля, проигнорируйте это письмо.</p>
+                    </div>
+                </body>
+                </html>
                 '''
-            }
-            
-            req = urllib.request.Request(
-                send_email_function_url,
-                data=json.dumps(email_body).encode('utf-8'),
-                headers={'Content-Type': 'application/json'},
-                method='POST'
-            )
-            
-            try:
-                urllib.request.urlopen(req)
-            except Exception as e:
-                print(f'Failed to send email: {e}')
+                
+                msg = MIMEMultipart('alternative')
+                msg['Subject'] = 'Восстановление пароля'
+                msg['From'] = smtp_user
+                msg['To'] = email
+                msg['Reply-To'] = smtp_user
+                
+                msg.attach(MIMEText(html_body, 'html', 'utf-8'))
+                
+                try:
+                    server = smtplib.SMTP(smtp_host, smtp_port)
+                    server.starttls()
+                    server.login(smtp_user, smtp_password)
+                    server.send_message(msg)
+                    server.quit()
+                except Exception as e:
+                    print(f'Failed to send email: {e}')
             
             return {
                 'statusCode': 200,
