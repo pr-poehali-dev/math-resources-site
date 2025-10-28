@@ -176,6 +176,10 @@ const Admin = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => navigate('/orders-history')}>
+              <Icon name="Receipt" size={18} className="mr-2" />
+              История заказов
+            </Button>
             <Button variant="ghost" onClick={handleLogout}>
               <Icon name="LogOut" size={18} className="mr-2" />
               Выйти
