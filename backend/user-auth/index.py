@@ -102,6 +102,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             row = cur.fetchone()
             
             if not row:
+                print(f'User not found: {email}')
                 return {
                     'statusCode': 401,
                     'headers': headers,
@@ -110,8 +111,12 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             
             user_id, password_hash, user_full_name = row
+            print(f'User found: {email}, checking password')
             
-            if not bcrypt.checkpw(password.encode('utf-8'), password_hash.encode('utf-8')):
+            password_match = bcrypt.checkpw(password.encode('utf-8'), password_hash.encode('utf-8'))
+            print(f'Password match: {password_match}')
+            
+            if not password_match:
                 return {
                     'statusCode': 401,
                     'headers': headers,
