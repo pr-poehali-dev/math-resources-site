@@ -54,15 +54,14 @@ const OrdersHistory = () => {
   };
 
   const formatDate = (dateString: string) => {
-    const utcDate = new Date(dateString + 'Z');
-    const moscowDate = new Date(utcDate.getTime() + 3 * 60 * 60 * 1000);
+    const date = new Date(dateString);
     return new Intl.DateTimeFormat('ru-RU', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
-    }).format(moscowDate);
+    }).format(date);
   };
 
   const getStatusBadge = (status: string) => {
