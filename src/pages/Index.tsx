@@ -258,10 +258,16 @@ const Index = () => {
                 Личный кабинет
               </Button>
             ) : (
-              <Button variant="default" size="sm" onClick={() => setIsAuthDialogOpen(true)}>
-                <Icon name="LogIn" size={18} className="mr-2" />
-                Войти
-              </Button>
+              <>
+                <Button variant="ghost" size="sm" onClick={() => navigate('/forgot-password')}>
+                  <Icon name="KeyRound" size={18} className="mr-2" />
+                  Восстановить пароль
+                </Button>
+                <Button variant="default" size="sm" onClick={() => setIsAuthDialogOpen(true)}>
+                  <Icon name="LogIn" size={18} className="mr-2" />
+                  Войти
+                </Button>
+              </>
             )}
           
             <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
