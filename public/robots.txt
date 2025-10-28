@@ -1,8 +1,20 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /admin
+Disallow: /admin-deliver
+Disallow: /login
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /admin-deliver
+Disallow: /login
+
+User-agent: Yandex
+Allow: /
+Disallow: /admin
+Disallow: /admin-deliver
+Disallow: /login
 
 User-agent: Twitterbot
 Allow: /
@@ -12,3 +24,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin-deliver
+Disallow: /login
+
+Sitemap: https://mk-room.ru/sitemap.xml

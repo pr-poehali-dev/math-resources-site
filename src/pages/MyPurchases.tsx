@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
+import SEO from '@/components/SEO';
 
 interface Purchase {
   id: number;
@@ -58,6 +59,10 @@ const MyPurchases = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Мои покупки"
+        description="Ваши купленные материалы по математике"
+      />
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">

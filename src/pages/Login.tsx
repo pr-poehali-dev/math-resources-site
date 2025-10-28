@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
+import SEO from '@/components/SEO';
 
 const AUTH_URL = 'https://functions.poehali.dev/8992932f-caba-4f72-8b04-4f01cbda4427';
 
@@ -44,6 +45,10 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
+      <SEO 
+        title="Вход"
+        description="Вход в админ-панель Математической кухни"
+      />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">

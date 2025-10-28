@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/SEO';
 
 interface Product {
   id: number;
@@ -158,6 +159,10 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Админ-панель"
+        description="Управление каталогом материалов по математике"
+      />
       <header className="border-b bg-white">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-4">

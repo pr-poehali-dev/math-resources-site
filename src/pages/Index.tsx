@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
+import SEO from '@/components/SEO';
 
 interface Product {
   id: number;
@@ -218,6 +219,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Тренажёры и методички по математике"
+        description="Качественные методички, рабочие листы и тренажёры по математике для 5–11 классов. Эффективная подготовка к ОГЭ и ЕГЭ с ответами и без."
+        keywords="математика, ОГЭ, ЕГЭ, тренажёры по математике, методички, рабочие листы, подготовка к экзаменам"
+      />
       <div className="bg-primary text-primary-foreground py-2 text-center text-sm font-medium">
         🎉 Скидка 15% при покупке от 10 материалов!
       </div>
