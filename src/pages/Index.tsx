@@ -455,30 +455,41 @@ const Index = () => {
               </CardContent>
               <CardFooter className="flex justify-between items-center">
                 <p className="text-2xl font-bold">{product.price} ₽</p>
-                {purchasedProductIds.includes(product.id) ? (
-                  <Button
-                    className="bg-green-50 text-green-700 border border-green-200 hover:bg-green-50 cursor-default"
-                    disabled
-                  >
-                    <Icon name="CheckCircle2" size={18} className="mr-2" />
-                    Оплачен
-                  </Button>
-                ) : cart.some(item => item.id === product.id) ? (
-                  <Button
-                    className="bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-100 cursor-default"
-                    disabled
-                  >
-                    <Icon name="ShoppingCart" size={18} className="mr-2" />
-                    В корзине
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={() => addToCart(product)}
-                  >
-                    <Icon name="ShoppingCart" size={18} className="mr-2" />
-                    В корзину
-                  </Button>
-                )}
+                {(() => {
+                  const isPurchased = purchasedProductIds.includes(product.id);
+                  const isInCart = cart.find(item => item.id === product.id);
+                  
+                  if (isPurchased) {
+                    return (
+                      <Button
+                        className="bg-green-50 text-green-700 border border-green-200 hover:bg-green-50 cursor-default"
+                        disabled
+                      >
+                        <Icon name="CheckCircle2" size={18} className="mr-2" />
+                        Оплачен
+                      </Button>
+                    );
+                  }
+                  
+                  if (isInCart) {
+                    return (
+                      <Button
+                        className="bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-100 cursor-default"
+                        disabled
+                      >
+                        <Icon name="ShoppingCart" size={18} className="mr-2" />
+                        В корзине
+                      </Button>
+                    );
+                  }
+                  
+                  return (
+                    <Button onClick={() => addToCart(product)}>
+                      <Icon name="ShoppingCart" size={18} className="mr-2" />
+                      В корзину
+                    </Button>
+                  );
+                })()}
               </CardFooter>
             </Card>
           ))}
