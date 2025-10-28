@@ -54,6 +54,12 @@ const Index = () => {
   const [currentUserEmail, setCurrentUserEmail] = useState('');
 
   useEffect(() => {
+    // Add Yandex verification meta tag
+    const meta = document.createElement('meta');
+    meta.name = 'yandex-verification';
+    meta.content = 'bc4ced2e8c5210d7';
+    document.head.appendChild(meta);
+
     loadProducts();
     const token = localStorage.getItem('user_token');
     const email = localStorage.getItem('user_email');
@@ -61,6 +67,12 @@ const Index = () => {
       setIsLoggedIn(true);
       setCurrentUserEmail(email);
     }
+
+    return () => {
+      // Cleanup meta tag on unmount
+      const existingMeta = document.querySelector('meta[name="yandex-verification"]');
+      if (existingMeta) existingMeta.remove();
+    };
   }, []);
 
   const loadProducts = async () => {
