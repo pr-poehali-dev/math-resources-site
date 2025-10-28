@@ -79,7 +79,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             )
             conn.commit()
             
-            reset_url = f"{os.environ.get('FRONTEND_URL', 'https://mk-room.ru')}/reset-password?token={token}"
+            reset_url = f"{os.environ.get('FRONTEND_URL', 'https://preview--math-resources-site.poehali.dev')}/reset-password?token={token}"
             
             smtp_host = os.environ.get('SMTP_HOST')
             smtp_port = int(os.environ.get('SMTP_PORT', '587'))
