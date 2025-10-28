@@ -58,9 +58,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             p.title,
             oi.quantity,
             oi.price
-        FROM t_p99209851_math_resources_site.orders o
-        LEFT JOIN t_p99209851_math_resources_site.order_items oi ON oi.order_id = o.id
-        LEFT JOIN t_p99209851_math_resources_site.products p ON p.id = oi.product_id
+        FROM orders o
+        LEFT JOIN order_items oi ON oi.order_id = o.id
+        LEFT JOIN products p ON p.id = oi.product_id
         ORDER BY o.created_at DESC
     """)
     
