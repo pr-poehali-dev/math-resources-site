@@ -54,27 +54,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     orders: List[Dict[str, Any]] = []
     
     for order_row in orders_rows:
-        order_id = order_row[0]
-        
-        cur.execute(f"SELECT oi.product_id, p.title, oi.quantity, oi.price FROM order_items oi LEFT JOIN products p ON p.id = oi.product_id WHERE oi.order_id = {order_id}")
-        items_rows = cur.fetchall()
-        
-        items = []
-        for item_row in items_rows:
-            items.append({
-                'product_id': item_row[0],
-                'product_title': item_row[1],
-                'quantity': item_row[2],
-                'price': item_row[3]
-            })
-        
         orders.append({
-            'id': order_id,
+            'id': order_row[0],
             'guest_email': order_row[1],
             'total_price': order_row[2],
             'payment_status': order_row[3],
             'created_at': order_row[4].isoformat() if order_row[4] else None,
-            'items': items
+            'items': []
         })
     
     cur.close()
