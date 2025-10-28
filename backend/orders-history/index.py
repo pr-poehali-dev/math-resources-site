@@ -73,7 +73,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'guest_email': order_row[1],
             'total_price': order_row[2],
             'payment_status': order_row[3],
-            'created_at': order_row[4].isoformat() if order_row[4] else None,
+            'created_at': order_row[4].isoformat() + 'Z' if order_row[4] else None,
             'items': items
         })
     
