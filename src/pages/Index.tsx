@@ -140,20 +140,16 @@ const Index = () => {
     
     setCheckoutLoading(true);
     try {
-      const orderDescription = cart.map(item => `${item.title} (${item.quantity} шт.)`).join(', ');
       const returnUrl = window.location.origin + '/';
-      
       const productIds = cart.map(item => item.id);
       
-      const response = await fetch('https://functions.poehali.dev/c3183bd5-f862-4c83-bf32-b86987ab972c', {
+      const response = await fetch('https://functions.poehali.dev/05fb0013-0d79-4a67-a86f-a215f7c89e1c', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: totalPrice,
-          description: orderDescription,
-          return_url: returnUrl,
+          product_ids: productIds,
           customer_email: guestEmail,
-          product_ids: productIds
+          return_url: returnUrl
         })
       });
       
@@ -194,19 +190,16 @@ const Index = () => {
         localStorage.setItem('user_token', authData.token);
         localStorage.setItem('user_email', authData.email);
         
-        const orderDescription = cart.map(item => `${item.title} (${item.quantity} шт.)`).join(', ');
         const returnUrl = window.location.origin + '/my-purchases';
         const productIds = cart.map(item => item.id);
         
-        const response = await fetch('https://functions.poehali.dev/c3183bd5-f862-4c83-bf32-b86987ab972c', {
+        const response = await fetch('https://functions.poehali.dev/05fb0013-0d79-4a67-a86f-a215f7c89e1c', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            amount: totalPrice,
-            description: orderDescription,
-            return_url: returnUrl,
+            product_ids: productIds,
             customer_email: registerEmail,
-            product_ids: productIds
+            return_url: returnUrl
           })
         });
         
@@ -223,6 +216,39 @@ const Index = () => {
       }
     } catch (error) {
       toast.error('Ошибка при оформлении');
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
+  const handleLoggedInCheckout = async () => {
+    if (!currentUserEmail || cart.length === 0) return;
+    
+    setCheckoutLoading(true);
+    try {
+      const returnUrl = window.location.origin + '/my-purchases';
+      const productIds = cart.map(item => item.id);
+      
+      const response = await fetch('https://functions.poehali.dev/05fb0013-0d79-4a67-a86f-a215f7c89e1c', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_ids: productIds,
+          customer_email: currentUserEmail,
+          return_url: returnUrl
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.payment_url) {
+        localStorage.setItem('pending_order', JSON.stringify({ cart, email: currentUserEmail }));
+        window.location.href = data.payment_url;
+      } else {
+        toast.error('Ошибка создания платежа');
+      }
+    } catch (error) {
+      toast.error('Ошибка при оплате');
     } finally {
       setCheckoutLoading(false);
     }
@@ -737,11 +763,59 @@ const Index = () => {
             </DialogDescription>
           </DialogHeader>
 
-          <Tabs defaultValue="guest" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="guest">Без регистрации</TabsTrigger>
-              <TabsTrigger value="register">С аккаунтом</TabsTrigger>
+          <Tabs defaultValue={isLoggedIn ? "logged-in" : "guest"} className="w-full">
+            <TabsList className={`grid w-full ${isLoggedIn ? 'grid-cols-1' : 'grid-cols-2'}`}>
+              {isLoggedIn ? (
+                <TabsTrigger value="logged-in">Оплата</TabsTrigger>
+              ) : (
+                <>
+                  <TabsTrigger value="guest">Без регистрации</TabsTrigger>
+                  <TabsTrigger value="register">С аккаунтом</TabsTrigger>
+                </>
+              )}
             </TabsList>
+
+            {isLoggedIn && (
+              <TabsContent value="logged-in" className="space-y-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-900">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon name="User" size={20} />
+                    <span className="font-semibold">Вы вошли как</span>
+                  </div>
+                  <p className="text-sm">{currentUserEmail}</p>
+                </div>
+
+                <div className="space-y-2 bg-muted/30 p-4 rounded-lg">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Товаров:</span>
+                    <span>{totalItems} шт.</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Сумма:</span>
+                    <span>{subtotal} ₽</span>
+                  </div>
+                  {hasDiscount && (
+                    <div className="flex justify-between text-sm text-green-600 font-medium">
+                      <span>Скидка 15%:</span>
+                      <span>-{discountAmount} ₽</span>
+                    </div>
+                  )}
+                  <Separator />
+                  <div className="flex justify-between items-center text-lg font-bold">
+                    <span>Итого:</span>
+                    <span>{totalPrice} ₽</span>
+                  </div>
+                </div>
+
+                <Button 
+                  className="w-full" 
+                  onClick={handleLoggedInCheckout}
+                  disabled={checkoutLoading}
+                >
+                  {checkoutLoading ? 'Обработка...' : 'Перейти к оплате'}
+                </Button>
+              </TabsContent>
+            )}
 
             <TabsContent value="guest" className="space-y-4">
               <div className="space-y-2">
