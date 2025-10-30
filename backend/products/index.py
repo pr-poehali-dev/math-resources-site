@@ -36,7 +36,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             product_id = event.get('queryStringParameters', {}).get('id')
             
             if product_id:
-                cur.execute('SELECT id, title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url FROM products WHERE id = %s', (product_id,))
+                query = f"SELECT id, title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url FROM products WHERE id = {int(product_id)}"
+                cur.execute(query)
                 row = cur.fetchone()
                 if row:
                     product = {
@@ -99,24 +100,26 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         elif method == 'POST':
             body_data = json.loads(event.get('body', '{}'))
-            title = body_data.get('title')
-            description = body_data.get('description')
-            price = body_data.get('price')
-            category = body_data.get('category')
-            product_type = body_data.get('type')
-            sample_pdf_url = body_data.get('sample_pdf_url')
-            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url')
-            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url')
-            trainer1_url = body_data.get('trainer1_url')
-            trainer2_url = body_data.get('trainer2_url')
-            trainer3_url = body_data.get('trainer3_url')
+            title = body_data.get('title', '').replace("'", "''")
+            description = body_data.get('description', '').replace("'", "''")
+            price = body_data.get('price', 0)
+            category = body_data.get('category', '').replace("'", "''")
+            product_type = body_data.get('type', '').replace("'", "''")
+            sample_pdf_url = body_data.get('sample_pdf_url', '').replace("'", "''")
+            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url', '').replace("'", "''")
+            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url', '').replace("'", "''")
+            trainer1_url = body_data.get('trainer1_url', '').replace("'", "''")
+            trainer2_url = body_data.get('trainer2_url', '').replace("'", "''")
+            trainer3_url = body_data.get('trainer3_url', '').replace("'", "''")
             is_free = body_data.get('is_free', False)
-            preview_image_url = body_data.get('preview_image_url')
+            preview_image_url = body_data.get('preview_image_url', '').replace("'", "''")
             
-            cur.execute(
-                'INSERT INTO products (title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id',
-                (title, description, price, category, product_type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url)
-            )
+            query = f"""
+                INSERT INTO products (title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url) 
+                VALUES ('{title}', '{description}', {price}, '{category}', '{product_type}', '{sample_pdf_url}', '{full_pdf_with_answers_url}', '{full_pdf_without_answers_url}', '{trainer1_url}', '{trainer2_url}', '{trainer3_url}', {is_free}, '{preview_image_url}') 
+                RETURNING id
+            """
+            cur.execute(query)
             new_id = cur.fetchone()[0]
             conn.commit()
             
@@ -129,25 +132,31 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         elif method == 'PUT':
             body_data = json.loads(event.get('body', '{}'))
-            product_id = body_data.get('id')
-            title = body_data.get('title')
-            description = body_data.get('description')
-            price = body_data.get('price')
-            category = body_data.get('category')
-            product_type = body_data.get('type')
-            sample_pdf_url = body_data.get('sample_pdf_url')
-            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url')
-            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url')
-            trainer1_url = body_data.get('trainer1_url')
-            trainer2_url = body_data.get('trainer2_url')
-            trainer3_url = body_data.get('trainer3_url')
+            product_id = int(body_data.get('id'))
+            title = body_data.get('title', '').replace("'", "''")
+            description = body_data.get('description', '').replace("'", "''")
+            price = body_data.get('price', 0)
+            category = body_data.get('category', '').replace("'", "''")
+            product_type = body_data.get('type', '').replace("'", "''")
+            sample_pdf_url = body_data.get('sample_pdf_url', '').replace("'", "''")
+            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url', '').replace("'", "''")
+            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url', '').replace("'", "''")
+            trainer1_url = body_data.get('trainer1_url', '').replace("'", "''")
+            trainer2_url = body_data.get('trainer2_url', '').replace("'", "''")
+            trainer3_url = body_data.get('trainer3_url', '').replace("'", "''")
             is_free = body_data.get('is_free', False)
-            preview_image_url = body_data.get('preview_image_url')
+            preview_image_url = body_data.get('preview_image_url', '').replace("'", "''")
             
-            cur.execute(
-                'UPDATE products SET title = %s, description = %s, price = %s, category = %s, type = %s, sample_pdf_url = %s, full_pdf_with_answers_url = %s, full_pdf_without_answers_url = %s, trainer1_url = %s, trainer2_url = %s, trainer3_url = %s, is_free = %s, preview_image_url = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
-                (title, description, price, category, product_type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url, product_id)
-            )
+            query = f"""
+                UPDATE products 
+                SET title = '{title}', description = '{description}', price = {price}, category = '{category}', type = '{product_type}', 
+                    sample_pdf_url = '{sample_pdf_url}', full_pdf_with_answers_url = '{full_pdf_with_answers_url}', 
+                    full_pdf_without_answers_url = '{full_pdf_without_answers_url}', trainer1_url = '{trainer1_url}', 
+                    trainer2_url = '{trainer2_url}', trainer3_url = '{trainer3_url}', is_free = {is_free}, 
+                    preview_image_url = '{preview_image_url}', updated_at = CURRENT_TIMESTAMP 
+                WHERE id = {product_id}
+            """
+            cur.execute(query)
             conn.commit()
             
             return {
@@ -159,9 +168,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         elif method == 'DELETE':
             body_data = json.loads(event.get('body', '{}'))
-            product_id = body_data.get('id')
+            product_id = int(body_data.get('id'))
             
-            cur.execute('DELETE FROM products WHERE id = %s', (product_id,))
+            query = f"DELETE FROM products WHERE id = {product_id}"
+            cur.execute(query)
             conn.commit()
             
             return {
