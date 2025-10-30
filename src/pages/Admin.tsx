@@ -335,26 +335,46 @@ const Admin = () => {
                             const file = (e.target as HTMLInputElement).files?.[0];
                             if (!file) return;
                             
+                            if (file.size > 5 * 1024 * 1024) {
+                              toast.error('Файл слишком большой (макс 5 МБ)');
+                              return;
+                            }
+                            
                             setUploadingImage(true);
                             try {
-                              const formData = new FormData();
-                              formData.append('file', file);
-                              
-                              const response = await fetch('https://functions.poehali.dev/cc6c5ccf-7c44-4ff3-94d3-67a08ba0b9a9', {
-                                method: 'POST',
-                                body: formData
-                              });
-                              
-                              const data = await response.json();
-                              if (data.url) {
-                                setFormData(prev => ({ ...prev, preview_image_url: data.url }));
-                                toast.success('Картинка загружена');
-                              } else {
-                                toast.error('Ошибка загрузки');
-                              }
+                              const reader = new FileReader();
+                              reader.onload = async (event) => {
+                                try {
+                                  const base64 = event.target?.result as string;
+                                  const base64Data = base64.split(',')[1];
+                                  
+                                  const response = await fetch('https://functions.poehali.dev/cc6c5ccf-7c44-4ff3-94d3-67a08ba0b9a9', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                      file: base64Data,
+                                      filename: file.name
+                                    })
+                                  });
+                                  
+                                  const data = await response.json();
+                                  if (data.url) {
+                                    setFormData(prev => ({ ...prev, preview_image_url: data.url }));
+                                    toast.success('Картинка загружена');
+                                  } else {
+                                    toast.error('Ошибка загрузки: ' + (data.error || 'Unknown error'));
+                                  }
+                                } catch (error) {
+                                  console.error('Upload error:', error);
+                                  toast.error('Ошибка загрузки');
+                                } finally {
+                                  setUploadingImage(false);
+                                }
+                              };
+                              reader.readAsDataURL(file);
                             } catch (error) {
-                              toast.error('Ошибка загрузки');
-                            } finally {
+                              console.error('Read error:', error);
+                              toast.error('Ошибка чтения файла');
                               setUploadingImage(false);
                             }
                           };
