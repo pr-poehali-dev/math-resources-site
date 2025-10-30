@@ -232,9 +232,6 @@ const Admin = () => {
       <header className="border-b bg-white">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-              <Icon name="ArrowLeft" size={20} />
-            </Button>
             <div className="flex items-center gap-2">
               <Icon name="Settings" size={24} className="text-primary" />
               <h1 className="text-xl font-bold">Админ-панель</h1>
@@ -255,6 +252,10 @@ const Admin = () => {
                 </div>
               </div>
             )}
+            <Button variant="outline" onClick={() => navigate('/')}>
+              <Icon name="Home" size={18} className="mr-2" />
+              На главную
+            </Button>
             <Button variant="outline" onClick={() => navigate('/orders-history')}>
               <Icon name="Receipt" size={18} className="mr-2" />
               История заказов
