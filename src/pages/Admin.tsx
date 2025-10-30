@@ -42,6 +42,7 @@ const Admin = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [generatingImage, setGeneratingImage] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -349,16 +350,77 @@ const Admin = () => {
 
                   <div className="grid gap-2">
                     <Label htmlFor="preview_image_url">Превью рабочего листа (необязательно)</Label>
-                    <Input
-                      id="preview_image_url"
-                      type="url"
-                      placeholder="https://cdn.poehali.dev/files/..."
-                      value={formData.preview_image_url}
-                      onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Откройте консоль (Cmd+Option+J), перетащите PNG в браузер, скопируйте ссылку из консоли и вставьте выше
-                    </p>
+                    <div className="flex gap-2">
+                      <Input
+                        id="preview_image_url"
+                        type="url"
+                        placeholder="Вставьте ссылку или нажмите 'Сгенерировать'"
+                        value={formData.preview_image_url}
+                        onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={generatingImage}
+                        onClick={async () => {
+                          setGeneratingImage(true);
+                          try {
+                            const prompt = `Educational worksheet preview for ${formData.title}: ${formData.type} for grade ${formData.category}, professional mathematics textbook style, clean layout`;
+                            const response = await fetch('https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({ inputs: prompt })
+                            });
+                            
+                            if (response.ok) {
+                              const blob = await response.blob();
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                const base64 = reader.result as string;
+                                const formDataUpload = new FormData();
+                                formDataUpload.append('file', blob, 'preview.png');
+                                
+                                fetch('https://storage-upload.poehali.dev/upload', {
+                                  method: 'POST',
+                                  body: formDataUpload
+                                })
+                                  .then(res => res.json())
+                                  .then(data => {
+                                    if (data.url) {
+                                      setFormData(prev => ({ ...prev, preview_image_url: data.url }));
+                                      toast.success('Картинка сгенерирована');
+                                    }
+                                  })
+                                  .catch(() => toast.error('Ошибка загрузки'))
+                                  .finally(() => setGeneratingImage(false));
+                              };
+                              reader.readAsDataURL(blob);
+                            } else {
+                              toast.error('Ошибка генерации');
+                              setGeneratingImage(false);
+                            }
+                          } catch (error) {
+                            toast.error('Ошибка генерации');
+                            setGeneratingImage(false);
+                          }
+                        }}
+                      >
+                        {generatingImage ? (
+                          <>
+                            <Icon name="Loader2" size={16} className="mr-2 animate-spin" />
+                            Генерация...
+                          </>
+                        ) : (
+                          <>
+                            <Icon name="Wand2" size={16} className="mr-2" />
+                            Сгенерировать
+                          </>
+                        )}
+                      </Button>
+                    </div>
                     {formData.preview_image_url && (
                       <img 
                         src={formData.preview_image_url} 
