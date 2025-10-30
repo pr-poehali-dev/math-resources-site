@@ -42,7 +42,6 @@ const Admin = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -350,75 +349,26 @@ const Admin = () => {
 
                   <div className="grid gap-2">
                     <Label htmlFor="preview_image_url">Превью рабочего листа (необязательно)</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="preview_image_url"
-                        type="url"
-                        placeholder="https://cdn.poehali.dev/files/..."
-                        value={formData.preview_image_url}
-                        onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
-                        className="flex-1"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={uploadingImage}
-                        onClick={() => {
-                          const input = document.createElement('input');
-                          input.type = 'file';
-                          input.accept = 'image/*';
-                          input.onchange = async (e) => {
-                            const file = (e.target as HTMLInputElement).files?.[0];
-                            if (!file) return;
-                            
-                            if (file.size > 5 * 1024 * 1024) {
-                              toast.error('Файл слишком большой (макс 5 МБ)');
-                              return;
-                            }
-                            
-                            setUploadingImage(true);
-                            try {
-                              const formData = new FormData();
-                              formData.append('file', file);
-                              
-                              const response = await fetch('https://storage-upload.poehali.dev/upload', {
-                                method: 'POST',
-                                body: formData
-                              });
-                              
-                              if (response.ok) {
-                                const data = await response.json();
-                                if (data.url) {
-                                  setFormData(prev => ({ ...prev, preview_image_url: data.url }));
-                                  toast.success('Картинка загружена');
-                                } else {
-                                  toast.error('Ошибка: URL не получен');
-                                }
-                              } else {
-                                const errorText = await response.text();
-                                toast.error(`Ошибка загрузки: ${response.status}`);
-                                console.error('Upload failed:', errorText);
-                              }
-                            } catch (error) {
-                              console.error('Upload error:', error);
-                              toast.error('Ошибка загрузки');
-                            } finally {
-                              setUploadingImage(false);
-                            }
-                          };
-                          input.click();
-                        }}
-                      >
-                        {uploadingImage ? (
-                          <Icon name="Loader2" size={16} className="animate-spin" />
-                        ) : (
-                          <Icon name="Upload" size={16} />
-                        )}
-                      </Button>
-                    </div>
+                    <Input
+                      id="preview_image_url"
+                      type="url"
+                      placeholder="https://cdn.poehali.dev/files/..."
+                      value={formData.preview_image_url}
+                      onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
+                    />
                     <p className="text-xs text-muted-foreground">
-                      Картинка-скриншот рабочего листа — будет показываться на карточке товара
+                      Откройте консоль (Cmd+Option+J), перетащите PNG в браузер, скопируйте ссылку из консоли и вставьте выше
                     </p>
+                    {formData.preview_image_url && (
+                      <img 
+                        src={formData.preview_image_url} 
+                        alt="Превью" 
+                        className="mt-2 h-32 w-auto rounded border object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    )}
                   </div>
 
                   <div className="grid gap-2">
