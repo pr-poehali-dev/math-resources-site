@@ -67,13 +67,12 @@ const Admin = () => {
       return;
     }
     loadProducts();
-  }, [navigate]);
+  }, []);
 
   const loadProducts = async () => {
     try {
       const response = await fetch(API_URL);
       const data = await response.json();
-      console.log('Loaded products:', data.slice(0, 1).map(p => ({ id: p.id, description: p.description })));
       setProducts(data);
     } catch (error) {
       toast.error('Ошибка загрузки товаров');
@@ -82,7 +81,6 @@ const Admin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted!', formData);
     setLoading(true);
 
     try {
@@ -91,9 +89,6 @@ const Admin = () => {
         price: parseInt(formData.price),
         ...(editingProduct && { id: editingProduct.id })
       };
-
-      console.log('Sending payload:', { description: payload.description, descriptionLength: payload.description.length });
-      console.log('Description chars:', payload.description.split('').map((c, i) => `[${i}]: ${c.charCodeAt(0)} (${c === '\n' ? '\\n' : c})`).slice(0, 50));
 
       const response = await fetch(API_URL, {
         method: editingProduct ? 'PUT' : 'POST',
@@ -106,9 +101,8 @@ const Admin = () => {
         setIsDialogOpen(false);
         resetForm();
         await loadProducts();
-        console.log('Products reloaded after save');
       } else {
-        console.error('Save failed:', response.status, await response.text());
+        toast.error('Ошибка сохранения');
       }
     } catch (error) {
       toast.error('Ошибка сохранения');
