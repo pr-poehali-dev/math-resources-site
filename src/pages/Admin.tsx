@@ -348,7 +348,41 @@ const Admin = () => {
                     </Select>
                   </div>
 
-
+                  <div className="grid gap-2">
+                    <Label htmlFor="preview_image_url">Превью товара (важно!)</Label>
+                    <Input
+                      id="preview_image_url"
+                      type="url"
+                      placeholder="Вставьте ссылку на картинку"
+                      value={formData.preview_image_url}
+                      onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
+                    />
+                    <div className="text-xs bg-blue-50 border border-blue-200 rounded p-3 space-y-2">
+                      <p className="font-medium text-blue-900">📸 Как добавить картинку:</p>
+                      <ol className="list-decimal list-inside space-y-1 text-blue-800">
+                        <li>Откройте <a href="https://postimages.org" target="_blank" rel="noopener noreferrer" className="underline font-medium">postimages.org</a> в новой вкладке</li>
+                        <li>Нажмите "Choose images" и выберите вашу картинку</li>
+                        <li>Дождитесь загрузки (5-10 секунд)</li>
+                        <li>Найдите поле "Direct link" и нажмите "Copy"</li>
+                        <li>Вернитесь сюда и вставьте ссылку в поле выше</li>
+                      </ol>
+                      <p className="text-blue-700 text-xs italic">✓ Бесплатно, без регистрации, картинки не удаляются</p>
+                    </div>
+                    {formData.preview_image_url && (
+                      <div className="mt-2">
+                        <p className="text-xs text-muted-foreground mb-1">Предпросмотр:</p>
+                        <img 
+                          src={formData.preview_image_url} 
+                          alt="Превью" 
+                          className="h-32 w-auto rounded border object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '';
+                            (e.target as HTMLImageElement).alt = '❌ Неверная ссылка';
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
 
                   <div className="grid gap-2">
                     <Label htmlFor="sample_pdf_url">Ссылка на бесплатный образец (необязательно)</Label>
