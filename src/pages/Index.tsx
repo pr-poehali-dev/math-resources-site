@@ -487,7 +487,7 @@ const Index = () => {
                   ))}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-2 flex-grow">
                 {product.sample_pdf_url && product.sample_pdf_url.trim() !== '' && (
                   <a
                     href={product.sample_pdf_url}
@@ -537,13 +537,13 @@ const Index = () => {
                   </div>
                 )}
               </CardContent>
-              <CardFooter className="flex justify-between items-center">
+              <CardFooter className="flex justify-between items-center mt-auto">
                 {product.is_free ? (
-                  <p className="text-2xl font-bold text-gray-600">Бесплатно</p>
+                  <p className="text-2xl font-bold text-green-600">Бесплатно</p>
                 ) : (
                   <p className="text-2xl font-bold">{product.price} ₽</p>
                 )}
-                {(() => {
+                {!product.is_free && (() => {
                   const isPurchased = purchasedProductIds.includes(product.id);
                   const isInCart = cart.find(item => item.id === product.id);
                   
@@ -578,6 +578,7 @@ const Index = () => {
                     </Button>
                   );
                 })()}
+                {product.is_free && <div />}
               </CardFooter>
             </Card>
           ))}
