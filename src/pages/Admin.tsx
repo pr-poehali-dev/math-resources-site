@@ -348,31 +348,7 @@ const Admin = () => {
                     </Select>
                   </div>
 
-                  <div className="grid gap-2">
-                    <Label htmlFor="preview_image_url">Превью рабочего листа (необязательно)</Label>
-                    <Input
-                      id="preview_image_url"
-                      type="url"
-                      placeholder="https://i.postimg.cc/ваша-картинка.png"
-                      value={formData.preview_image_url}
-                      onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      1. Откройте <a href="https://postimages.org" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">postimages.org</a><br/>
-                      2. Загрузите картинку (без регистрации, бесплатно)<br/>
-                      3. Скопируйте "Direct link" и вставьте сюда
-                    </p>
-                    {formData.preview_image_url && (
-                      <img 
-                        src={formData.preview_image_url} 
-                        alt="Превью" 
-                        className="mt-2 h-32 w-auto rounded border object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
-                        }}
-                      />
-                    )}
-                  </div>
+
 
                   <div className="grid gap-2">
                     <Label htmlFor="sample_pdf_url">Ссылка на бесплатный образец (необязательно)</Label>
