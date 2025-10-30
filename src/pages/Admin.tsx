@@ -22,6 +22,9 @@ interface Product {
   sample_pdf_url?: string;
   full_pdf_with_answers_url?: string;
   full_pdf_without_answers_url?: string;
+  trainer1_url?: string;
+  trainer2_url?: string;
+  trainer3_url?: string;
 }
 
 const API_URL = 'https://functions.poehali.dev/4350c782-6bfa-4c53-b148-e1f621446eaa';
@@ -45,7 +48,10 @@ const Admin = () => {
     type: 'Методичка',
     sample_pdf_url: '',
     full_pdf_with_answers_url: '',
-    full_pdf_without_answers_url: ''
+    full_pdf_without_answers_url: '',
+    trainer1_url: '',
+    trainer2_url: '',
+    trainer3_url: ''
   });
 
   useEffect(() => {
@@ -131,7 +137,10 @@ const Admin = () => {
       type: product.type,
       sample_pdf_url: product.sample_pdf_url || '',
       full_pdf_with_answers_url: product.full_pdf_with_answers_url || '',
-      full_pdf_without_answers_url: product.full_pdf_without_answers_url || ''
+      full_pdf_without_answers_url: product.full_pdf_without_answers_url || '',
+      trainer1_url: product.trainer1_url || '',
+      trainer2_url: product.trainer2_url || '',
+      trainer3_url: product.trainer3_url || ''
     });
     setIsDialogOpen(true);
   };
@@ -146,7 +155,10 @@ const Admin = () => {
       type: 'Методичка',
       sample_pdf_url: '',
       full_pdf_with_answers_url: '',
-      full_pdf_without_answers_url: ''
+      full_pdf_without_answers_url: '',
+      trainer1_url: '',
+      trainer2_url: '',
+      trainer3_url: ''
     });
   };
 
@@ -315,6 +327,46 @@ const Admin = () => {
                     <p className="text-xs text-muted-foreground">
                       Если указано — доступен только после оплаты. Если пусто — товар бесплатный
                     </p>
+                  </div>
+
+                  <div className="border-t pt-4">
+                    <Label className="text-base font-semibold">Бесплатные тренажёры</Label>
+                    <p className="text-xs text-muted-foreground mb-3">Дополнительные бесплатные материалы для этого товара</p>
+                    
+                    <div className="grid gap-3">
+                      <div className="grid gap-2">
+                        <Label htmlFor="trainer1_url">Тренажёр №1 (необязательно)</Label>
+                        <Input
+                          id="trainer1_url"
+                          type="url"
+                          placeholder="https://drive.google.com/file/d/..."
+                          value={formData.trainer1_url}
+                          onChange={(e) => setFormData({ ...formData, trainer1_url: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <Label htmlFor="trainer2_url">Тренажёр №2 (необязательно)</Label>
+                        <Input
+                          id="trainer2_url"
+                          type="url"
+                          placeholder="https://drive.google.com/file/d/..."
+                          value={formData.trainer2_url}
+                          onChange={(e) => setFormData({ ...formData, trainer2_url: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <Label htmlFor="trainer3_url">Тренажёр №3 (необязательно)</Label>
+                        <Input
+                          id="trainer3_url"
+                          type="url"
+                          placeholder="https://drive.google.com/file/d/..."
+                          value={formData.trainer3_url}
+                          onChange={(e) => setFormData({ ...formData, trainer3_url: e.target.value })}
+                        />
+                      </div>
+                    </div>
                   </div>
                   
                   <div className="border-t pt-4">

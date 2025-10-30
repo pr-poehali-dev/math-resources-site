@@ -36,7 +36,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             product_id = event.get('queryStringParameters', {}).get('id')
             
             if product_id:
-                cur.execute('SELECT id, title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url FROM products WHERE id = %s', (product_id,))
+                cur.execute('SELECT id, title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url FROM products WHERE id = %s', (product_id,))
                 row = cur.fetchone()
                 if row:
                     product = {
@@ -48,7 +48,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                         'type': row[5],
                         'sample_pdf_url': row[6],
                         'full_pdf_with_answers_url': row[7],
-                        'full_pdf_without_answers_url': row[8]
+                        'full_pdf_without_answers_url': row[8],
+                        'trainer1_url': row[9],
+                        'trainer2_url': row[10],
+                        'trainer3_url': row[11]
                     }
                     return {
                         'statusCode': 200,
@@ -64,7 +67,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                         'isBase64Encoded': False
                     }
             else:
-                cur.execute('SELECT id, title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url FROM products ORDER BY id')
+                cur.execute('SELECT id, title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url FROM products ORDER BY id')
                 rows = cur.fetchall()
                 products = [
                     {
@@ -76,7 +79,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                         'type': row[5],
                         'sample_pdf_url': row[6],
                         'full_pdf_with_answers_url': row[7],
-                        'full_pdf_without_answers_url': row[8]
+                        'full_pdf_without_answers_url': row[8],
+                        'trainer1_url': row[9],
+                        'trainer2_url': row[10],
+                        'trainer3_url': row[11]
                     }
                     for row in rows
                 ]
@@ -97,10 +103,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             sample_pdf_url = body_data.get('sample_pdf_url')
             full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url')
             full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url')
+            trainer1_url = body_data.get('trainer1_url')
+            trainer2_url = body_data.get('trainer2_url')
+            trainer3_url = body_data.get('trainer3_url')
             
             cur.execute(
-                'INSERT INTO products (title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id',
-                (title, description, price, category, product_type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url)
+                'INSERT INTO products (title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id',
+                (title, description, price, category, product_type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url)
             )
             new_id = cur.fetchone()[0]
             conn.commit()
@@ -123,10 +132,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             sample_pdf_url = body_data.get('sample_pdf_url')
             full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url')
             full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url')
+            trainer1_url = body_data.get('trainer1_url')
+            trainer2_url = body_data.get('trainer2_url')
+            trainer3_url = body_data.get('trainer3_url')
             
             cur.execute(
-                'UPDATE products SET title = %s, description = %s, price = %s, category = %s, type = %s, sample_pdf_url = %s, full_pdf_with_answers_url = %s, full_pdf_without_answers_url = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
-                (title, description, price, category, product_type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, product_id)
+                'UPDATE products SET title = %s, description = %s, price = %s, category = %s, type = %s, sample_pdf_url = %s, full_pdf_with_answers_url = %s, full_pdf_without_answers_url = %s, trainer1_url = %s, trainer2_url = %s, trainer3_url = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
+                (title, description, price, category, product_type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, product_id)
             )
             conn.commit()
             

@@ -23,6 +23,9 @@ interface Product {
   sample_pdf_url?: string;
   full_pdf_with_answers_url?: string;
   full_pdf_without_answers_url?: string;
+  trainer1_url?: string;
+  trainer2_url?: string;
+  trainer3_url?: string;
 }
 
 interface CartItem extends Product {
@@ -472,7 +475,7 @@ const Index = () => {
                   ))}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-2">
                 {product.sample_pdf_url && product.sample_pdf_url.trim() !== '' && (
                   <a
                     href={product.sample_pdf_url}
@@ -483,6 +486,43 @@ const Index = () => {
                     <Icon name="FileText" size={16} />
                     Скачать бесплатный образец (PDF)
                   </a>
+                )}
+                {(product.trainer1_url || product.trainer2_url || product.trainer3_url) && (
+                  <div className="space-y-1.5 pt-2">
+                    {product.trainer1_url && product.trainer1_url.trim() !== '' && (
+                      <a
+                        href={product.trainer1_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm text-primary hover:underline"
+                      >
+                        <Icon name="Download" size={14} />
+                        Тренажёр №1
+                      </a>
+                    )}
+                    {product.trainer2_url && product.trainer2_url.trim() !== '' && (
+                      <a
+                        href={product.trainer2_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm text-primary hover:underline"
+                      >
+                        <Icon name="Download" size={14} />
+                        Тренажёр №2
+                      </a>
+                    )}
+                    {product.trainer3_url && product.trainer3_url.trim() !== '' && (
+                      <a
+                        href={product.trainer3_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm text-primary hover:underline"
+                      >
+                        <Icon name="Download" size={14} />
+                        Тренажёр №3
+                      </a>
+                    )}
+                  </div>
                 )}
               </CardContent>
               <CardFooter className="flex justify-between items-center">
