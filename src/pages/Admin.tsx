@@ -340,7 +340,7 @@ const Admin = () => {
                               const formData = new FormData();
                               formData.append('file', file);
                               
-                              const response = await fetch('https://functions.poehali.dev/d4c26bab-d60e-43ba-bf2e-58cb81a00c30', {
+                              const response = await fetch('https://functions.poehali.dev/cc6c5ccf-7c44-4ff3-94d3-67a08ba0b9a9', {
                                 method: 'POST',
                                 body: formData
                               });
