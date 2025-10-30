@@ -172,6 +172,42 @@ const Admin = () => {
     });
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Файл слишком большой (макс. 5MB)');
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Можно загружать только изображения');
+      return;
+    }
+
+    setUploadingImage(true);
+
+    try {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        setFormData({ ...formData, preview_image_url: base64 });
+        toast.success('Изображение загружено');
+        setUploadingImage(false);
+      };
+      reader.onerror = () => {
+        toast.error('Ошибка чтения файла');
+        setUploadingImage(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Ошибка загрузки изображения');
+      setUploadingImage(false);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('username');
@@ -342,31 +378,21 @@ const Admin = () => {
                             
                             setUploadingImage(true);
                             try {
-                              const formData = new FormData();
-                              formData.append('file', file);
-                              
-                              const response = await fetch('/api/upload', {
-                                method: 'POST',
-                                body: formData
-                              });
-                              
-                              if (response.ok) {
-                                const data = await response.json();
-                                if (data.url) {
-                                  setFormData(prev => ({ ...prev, preview_image_url: data.url }));
-                                  toast.success('Картинка загружена');
-                                } else {
-                                  toast.error('Ошибка: URL не получен');
-                                }
-                              } else {
-                                const errorText = await response.text();
-                                toast.error(`Ошибка загрузки: ${response.status}`);
-                                console.error('Upload failed:', errorText);
-                              }
+                              const reader = new FileReader();
+                              reader.onload = () => {
+                                const base64 = reader.result as string;
+                                setFormData(prev => ({ ...prev, preview_image_url: base64 }));
+                                toast.success('Изображение загружено');
+                                setUploadingImage(false);
+                              };
+                              reader.onerror = () => {
+                                toast.error('Ошибка загрузки');
+                                setUploadingImage(false);
+                              };
+                              reader.readAsDataURL(file);
                             } catch (error) {
                               console.error('Upload error:', error);
                               toast.error('Ошибка загрузки');
-                            } finally {
                               setUploadingImage(false);
                             }
                           };
