@@ -350,53 +350,18 @@ const Admin = () => {
 
                   <div className="grid gap-2">
                     <Label htmlFor="preview_image_url">Превью рабочего листа (необязательно)</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="preview_image_file"
-                        type="file"
-                        accept="image/*"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-
-                          if (file.size > 5 * 1024 * 1024) {
-                            toast.error('Файл слишком большой (макс 5 МБ)');
-                            return;
-                          }
-
-                          setUploadingImage(true);
-                          try {
-                            const formDataUpload = new FormData();
-                            formDataUpload.append('file', file);
-
-                            const response = await fetch('https://functions.poehali.dev/656fba02-bcb4-4232-a86f-427649503545', {
-                              method: 'POST',
-                              body: formDataUpload
-                            });
-
-                            if (response.ok) {
-                              const data = await response.json();
-                              if (data.url) {
-                                setFormData(prev => ({ ...prev, preview_image_url: data.url }));
-                                toast.success('Картинка загружена');
-                              } else {
-                                toast.error('Ошибка: URL не получен');
-                              }
-                            } else {
-                              toast.error(`Ошибка загрузки: ${response.status}`);
-                            }
-                          } catch (error) {
-                            console.error('Upload error:', error);
-                            toast.error('Ошибка загрузки');
-                          } finally {
-                            setUploadingImage(false);
-                          }
-                        }}
-                        disabled={uploadingImage}
-                        className="flex-1"
-                      />
-                      {uploadingImage && <span className="text-sm text-muted-foreground">Загрузка...</span>}
-                    </div>
+                    <Input
+                      id="preview_image_url"
+                      type="url"
+                      placeholder="https://i.postimg.cc/ваша-картинка.png"
+                      value={formData.preview_image_url}
+                      onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      1. Откройте <a href="https://postimages.org" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">postimages.org</a><br/>
+                      2. Загрузите картинку (без регистрации, бесплатно)<br/>
+                      3. Скопируйте "Direct link" и вставьте сюда
+                    </p>
                     {formData.preview_image_url && (
                       <img 
                         src={formData.preview_image_url} 
