@@ -100,23 +100,30 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         elif method == 'POST':
             body_data = json.loads(event.get('body', '{}'))
-            title = body_data.get('title', '').replace("'", "''")
-            description = body_data.get('description', '').replace("'", "''")
+            
+            def safe_str(val):
+                if val is None or val == '':
+                    return 'NULL'
+                escaped = str(val).replace("'", "''")
+                return f"'{escaped}'"
+            
+            title = body_data.get('title', '')
+            description = body_data.get('description', '')
             price = body_data.get('price', 0)
-            category = body_data.get('category', '').replace("'", "''")
-            product_type = body_data.get('type', '').replace("'", "''")
-            sample_pdf_url = body_data.get('sample_pdf_url', '').replace("'", "''")
-            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url', '').replace("'", "''")
-            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url', '').replace("'", "''")
-            trainer1_url = body_data.get('trainer1_url', '').replace("'", "''")
-            trainer2_url = body_data.get('trainer2_url', '').replace("'", "''")
-            trainer3_url = body_data.get('trainer3_url', '').replace("'", "''")
+            category = body_data.get('category', '')
+            product_type = body_data.get('type', '')
+            sample_pdf_url = body_data.get('sample_pdf_url')
+            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url')
+            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url')
+            trainer1_url = body_data.get('trainer1_url')
+            trainer2_url = body_data.get('trainer2_url')
+            trainer3_url = body_data.get('trainer3_url')
             is_free = body_data.get('is_free', False)
-            preview_image_url = body_data.get('preview_image_url', '').replace("'", "''")
+            preview_image_url = body_data.get('preview_image_url')
             
             query = f"""
                 INSERT INTO products (title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url) 
-                VALUES ('{title}', '{description}', {price}, '{category}', '{product_type}', '{sample_pdf_url}', '{full_pdf_with_answers_url}', '{full_pdf_without_answers_url}', '{trainer1_url}', '{trainer2_url}', '{trainer3_url}', {is_free}, '{preview_image_url}') 
+                VALUES ({safe_str(title)}, {safe_str(description)}, {price}, {safe_str(category)}, {safe_str(product_type)}, {safe_str(sample_pdf_url)}, {safe_str(full_pdf_with_answers_url)}, {safe_str(full_pdf_without_answers_url)}, {safe_str(trainer1_url)}, {safe_str(trainer2_url)}, {safe_str(trainer3_url)}, {is_free}, {safe_str(preview_image_url)}) 
                 RETURNING id
             """
             cur.execute(query)
@@ -132,28 +139,35 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         elif method == 'PUT':
             body_data = json.loads(event.get('body', '{}'))
+            
+            def safe_str(val):
+                if val is None or val == '':
+                    return 'NULL'
+                escaped = str(val).replace("'", "''")
+                return f"'{escaped}'"
+            
             product_id = int(body_data.get('id'))
-            title = body_data.get('title', '').replace("'", "''")
-            description = body_data.get('description', '').replace("'", "''")
+            title = body_data.get('title', '')
+            description = body_data.get('description', '')
             price = body_data.get('price', 0)
-            category = body_data.get('category', '').replace("'", "''")
-            product_type = body_data.get('type', '').replace("'", "''")
-            sample_pdf_url = body_data.get('sample_pdf_url', '').replace("'", "''")
-            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url', '').replace("'", "''")
-            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url', '').replace("'", "''")
-            trainer1_url = body_data.get('trainer1_url', '').replace("'", "''")
-            trainer2_url = body_data.get('trainer2_url', '').replace("'", "''")
-            trainer3_url = body_data.get('trainer3_url', '').replace("'", "''")
+            category = body_data.get('category', '')
+            product_type = body_data.get('type', '')
+            sample_pdf_url = body_data.get('sample_pdf_url')
+            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url')
+            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url')
+            trainer1_url = body_data.get('trainer1_url')
+            trainer2_url = body_data.get('trainer2_url')
+            trainer3_url = body_data.get('trainer3_url')
             is_free = body_data.get('is_free', False)
-            preview_image_url = body_data.get('preview_image_url', '').replace("'", "''")
+            preview_image_url = body_data.get('preview_image_url')
             
             query = f"""
                 UPDATE products 
-                SET title = '{title}', description = '{description}', price = {price}, category = '{category}', type = '{product_type}', 
-                    sample_pdf_url = '{sample_pdf_url}', full_pdf_with_answers_url = '{full_pdf_with_answers_url}', 
-                    full_pdf_without_answers_url = '{full_pdf_without_answers_url}', trainer1_url = '{trainer1_url}', 
-                    trainer2_url = '{trainer2_url}', trainer3_url = '{trainer3_url}', is_free = {is_free}, 
-                    preview_image_url = '{preview_image_url}', updated_at = CURRENT_TIMESTAMP 
+                SET title = {safe_str(title)}, description = {safe_str(description)}, price = {price}, category = {safe_str(category)}, type = {safe_str(product_type)}, 
+                    sample_pdf_url = {safe_str(sample_pdf_url)}, full_pdf_with_answers_url = {safe_str(full_pdf_with_answers_url)}, 
+                    full_pdf_without_answers_url = {safe_str(full_pdf_without_answers_url)}, trainer1_url = {safe_str(trainer1_url)}, 
+                    trainer2_url = {safe_str(trainer2_url)}, trainer3_url = {safe_str(trainer3_url)}, is_free = {is_free}, 
+                    preview_image_url = {safe_str(preview_image_url)}, updated_at = CURRENT_TIMESTAMP 
                 WHERE id = {product_id}
             """
             cur.execute(query)
