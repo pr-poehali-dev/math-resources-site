@@ -102,24 +102,24 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             body_data = json.loads(event.get('body', '{}'))
             
             def safe_str(val):
-                if val is None or val == '':
+                if val is None or val == '' or (isinstance(val, str) and val.strip() == ''):
                     return 'NULL'
                 escaped = str(val).replace("'", "''")
                 return f"'{escaped}'"
             
             title = body_data.get('title', '')
             description = body_data.get('description', '')
-            price = body_data.get('price', 0)
+            price = body_data.get('price', 0) if body_data.get('price') else 0
             category = body_data.get('category', '')
             product_type = body_data.get('type', '')
-            sample_pdf_url = body_data.get('sample_pdf_url')
-            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url')
-            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url')
-            trainer1_url = body_data.get('trainer1_url')
-            trainer2_url = body_data.get('trainer2_url')
-            trainer3_url = body_data.get('trainer3_url')
+            sample_pdf_url = body_data.get('sample_pdf_url', '')
+            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url', '')
+            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url', '')
+            trainer1_url = body_data.get('trainer1_url', '')
+            trainer2_url = body_data.get('trainer2_url', '')
+            trainer3_url = body_data.get('trainer3_url', '')
             is_free = body_data.get('is_free', False)
-            preview_image_url = body_data.get('preview_image_url')
+            preview_image_url = body_data.get('preview_image_url', '')
             
             query = f"""
                 INSERT INTO products (title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url) 
@@ -141,7 +141,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             body_data = json.loads(event.get('body', '{}'))
             
             def safe_str(val):
-                if val is None or val == '':
+                if val is None or val == '' or (isinstance(val, str) and val.strip() == ''):
                     return 'NULL'
                 escaped = str(val).replace("'", "''")
                 return f"'{escaped}'"
@@ -149,17 +149,17 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             product_id = int(body_data.get('id'))
             title = body_data.get('title', '')
             description = body_data.get('description', '')
-            price = body_data.get('price', 0)
+            price = body_data.get('price', 0) if body_data.get('price') else 0
             category = body_data.get('category', '')
             product_type = body_data.get('type', '')
-            sample_pdf_url = body_data.get('sample_pdf_url')
-            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url')
-            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url')
-            trainer1_url = body_data.get('trainer1_url')
-            trainer2_url = body_data.get('trainer2_url')
-            trainer3_url = body_data.get('trainer3_url')
+            sample_pdf_url = body_data.get('sample_pdf_url', '')
+            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url', '')
+            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url', '')
+            trainer1_url = body_data.get('trainer1_url', '')
+            trainer2_url = body_data.get('trainer2_url', '')
+            trainer3_url = body_data.get('trainer3_url', '')
             is_free = body_data.get('is_free', False)
-            preview_image_url = body_data.get('preview_image_url')
+            preview_image_url = body_data.get('preview_image_url', '')
             
             query = f"""
                 UPDATE products 
