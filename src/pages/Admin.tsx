@@ -398,13 +398,25 @@ const Admin = () => {
 
                   <div className="grid gap-2">
                     <Label htmlFor="sample_pdf_url">Ссылка на бесплатный образец (необязательно)</Label>
-                    <Input
-                      id="sample_pdf_url"
-                      type="url"
-                      placeholder="https://drive.google.com/file/d/..."
-                      value={formData.sample_pdf_url}
-                      onChange={(e) => setFormData({ ...formData, sample_pdf_url: e.target.value })}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="sample_pdf_url"
+                        type="url"
+                        placeholder="https://drive.google.com/file/d/..."
+                        value={formData.sample_pdf_url}
+                        onChange={(e) => setFormData({ ...formData, sample_pdf_url: e.target.value })}
+                        className="pr-10"
+                      />
+                      {formData.sample_pdf_url && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, sample_pdf_url: '' })}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       Бесплатный образец (1-2 листа) — виден всем посетителям
                     </p>
@@ -412,13 +424,25 @@ const Admin = () => {
 
                   <div className="grid gap-2">
                     <Label htmlFor="full_pdf_with_answers_url">Ссылка на файл с ответами (необязательно)</Label>
-                    <Input
-                      id="full_pdf_with_answers_url"
-                      type="url"
-                      placeholder="https://drive.google.com/file/d/..."
-                      value={formData.full_pdf_with_answers_url}
-                      onChange={(e) => setFormData({ ...formData, full_pdf_with_answers_url: e.target.value })}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="full_pdf_with_answers_url"
+                        type="url"
+                        placeholder="https://drive.google.com/file/d/..."
+                        value={formData.full_pdf_with_answers_url}
+                        onChange={(e) => setFormData({ ...formData, full_pdf_with_answers_url: e.target.value })}
+                        className="pr-10"
+                      />
+                      {formData.full_pdf_with_answers_url && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, full_pdf_with_answers_url: '' })}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       Если указано — доступен только после оплаты. Если пусто — товар бесплатный
                     </p>
@@ -426,13 +450,25 @@ const Admin = () => {
 
                   <div className="grid gap-2">
                     <Label htmlFor="full_pdf_without_answers_url">Ссылка на файл без ответов (необязательно)</Label>
-                    <Input
-                      id="full_pdf_without_answers_url"
-                      type="url"
-                      placeholder="https://drive.google.com/file/d/..."
-                      value={formData.full_pdf_without_answers_url}
-                      onChange={(e) => setFormData({ ...formData, full_pdf_without_answers_url: e.target.value })}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="full_pdf_without_answers_url"
+                        type="url"
+                        placeholder="https://drive.google.com/file/d/..."
+                        value={formData.full_pdf_without_answers_url}
+                        onChange={(e) => setFormData({ ...formData, full_pdf_without_answers_url: e.target.value })}
+                        className="pr-10"
+                      />
+                      {formData.full_pdf_without_answers_url && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, full_pdf_without_answers_url: '' })}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       Если указано — доступен только после оплаты. Если пусто — товар бесплатный
                     </p>
@@ -445,35 +481,71 @@ const Admin = () => {
                     <div className="grid gap-3">
                       <div className="grid gap-2">
                         <Label htmlFor="trainer1_url">Тренажёр №1 (необязательно)</Label>
-                        <Input
-                          id="trainer1_url"
-                          type="url"
-                          placeholder="https://drive.google.com/file/d/..."
-                          value={formData.trainer1_url}
-                          onChange={(e) => setFormData({ ...formData, trainer1_url: e.target.value })}
-                        />
+                        <div className="relative">
+                          <Input
+                            id="trainer1_url"
+                            type="url"
+                            placeholder="https://drive.google.com/file/d/..."
+                            value={formData.trainer1_url}
+                            onChange={(e) => setFormData({ ...formData, trainer1_url: e.target.value })}
+                            className="pr-10"
+                          />
+                          {formData.trainer1_url && (
+                            <button
+                              type="button"
+                              onClick={() => setFormData({ ...formData, trainer1_url: '' })}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       <div className="grid gap-2">
                         <Label htmlFor="trainer2_url">Тренажёр №2 (необязательно)</Label>
-                        <Input
-                          id="trainer2_url"
-                          type="url"
-                          placeholder="https://drive.google.com/file/d/..."
-                          value={formData.trainer2_url}
-                          onChange={(e) => setFormData({ ...formData, trainer2_url: e.target.value })}
-                        />
+                        <div className="relative">
+                          <Input
+                            id="trainer2_url"
+                            type="url"
+                            placeholder="https://drive.google.com/file/d/..."
+                            value={formData.trainer2_url}
+                            onChange={(e) => setFormData({ ...formData, trainer2_url: e.target.value })}
+                            className="pr-10"
+                          />
+                          {formData.trainer2_url && (
+                            <button
+                              type="button"
+                              onClick={() => setFormData({ ...formData, trainer2_url: '' })}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       <div className="grid gap-2">
                         <Label htmlFor="trainer3_url">Тренажёр №3 (необязательно)</Label>
-                        <Input
-                          id="trainer3_url"
-                          type="url"
-                          placeholder="https://drive.google.com/file/d/..."
-                          value={formData.trainer3_url}
-                          onChange={(e) => setFormData({ ...formData, trainer3_url: e.target.value })}
-                        />
+                        <div className="relative">
+                          <Input
+                            id="trainer3_url"
+                            type="url"
+                            placeholder="https://drive.google.com/file/d/..."
+                            value={formData.trainer3_url}
+                            onChange={(e) => setFormData({ ...formData, trainer3_url: e.target.value })}
+                            className="pr-10"
+                          />
+                          {formData.trainer3_url && (
+                            <button
+                              type="button"
+                              onClick={() => setFormData({ ...formData, trainer3_url: '' })}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
