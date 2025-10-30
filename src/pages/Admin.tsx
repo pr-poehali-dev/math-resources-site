@@ -342,39 +342,31 @@ const Admin = () => {
                             
                             setUploadingImage(true);
                             try {
-                              const reader = new FileReader();
-                              reader.onload = async (event) => {
-                                try {
-                                  const base64 = event.target?.result as string;
-                                  const base64Data = base64.split(',')[1];
-                                  
-                                  const response = await fetch('https://functions.poehali.dev/656fba02-bcb4-4232-a86f-427649503545', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                      file: base64Data,
-                                      filename: file.name
-                                    })
-                                  });
-                                  
-                                  const data = await response.json();
-                                  if (data.url) {
-                                    setFormData(prev => ({ ...prev, preview_image_url: data.url }));
-                                    toast.success('Картинка загружена');
-                                  } else {
-                                    toast.error('Ошибка загрузки: ' + (data.error || 'Unknown error'));
-                                  }
-                                } catch (error) {
-                                  console.error('Upload error:', error);
-                                  toast.error('Ошибка загрузки');
-                                } finally {
-                                  setUploadingImage(false);
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              
+                              const response = await fetch('/api/upload', {
+                                method: 'POST',
+                                body: formData
+                              });
+                              
+                              if (response.ok) {
+                                const data = await response.json();
+                                if (data.url) {
+                                  setFormData(prev => ({ ...prev, preview_image_url: data.url }));
+                                  toast.success('Картинка загружена');
+                                } else {
+                                  toast.error('Ошибка: URL не получен');
                                 }
-                              };
-                              reader.readAsDataURL(file);
+                              } else {
+                                const errorText = await response.text();
+                                toast.error(`Ошибка загрузки: ${response.status}`);
+                                console.error('Upload failed:', errorText);
+                              }
                             } catch (error) {
-                              console.error('Read error:', error);
-                              toast.error('Ошибка чтения файла');
+                              console.error('Upload error:', error);
+                              toast.error('Ошибка загрузки');
+                            } finally {
                               setUploadingImage(false);
                             }
                           };

@@ -2,13 +2,14 @@ import json
 import os
 import base64
 import uuid
+import requests
 from typing import Dict, Any
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
-    Business: Загрузка изображений для превью товаров
+    Business: Загрузка изображений для превью товаров через внутренний API
     Args: event с httpMethod, body (JSON с base64); context с request_id
-    Returns: URL загруженного изображения через встроенное хранилище
+    Returns: URL загруженного изображения
     '''
     method: str = event.get('httpMethod', 'POST')
     
@@ -56,22 +57,41 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         if ext not in ['jpg', 'jpeg', 'png', 'gif', 'webp']:
             ext = 'png'
         
-        file_id = str(uuid.uuid4())
-        temp_path = f'/tmp/{file_id}.{ext}'
+        content_type_map = {
+            'png': 'image/png',
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'gif': 'image/gif',
+            'webp': 'image/webp'
+        }
+        content_type = content_type_map.get(ext, 'image/png')
         
-        with open(temp_path, 'wb') as f:
-            f.write(file_bytes)
+        upload_response = requests.post(
+            'https://api.poehali.dev/v1/upload',
+            files={'file': (filename, file_bytes, content_type)},
+            timeout=30
+        )
         
-        file_url = f'https://cdn.poehali.dev/files/{file_id}.{ext}'
+        if upload_response.status_code == 200:
+            upload_data = upload_response.json()
+            file_url = upload_data.get('url')
+            
+            if file_url:
+                return {
+                    'statusCode': 200,
+                    'headers': headers,
+                    'body': json.dumps({
+                        'url': file_url,
+                        'filename': filename,
+                        'size': len(file_bytes)
+                    }),
+                    'isBase64Encoded': False
+                }
         
         return {
-            'statusCode': 200,
+            'statusCode': 500,
             'headers': headers,
-            'body': json.dumps({
-                'url': file_url,
-                'filename': f'{file_id}.{ext}',
-                'size': len(file_bytes)
-            }),
+            'body': json.dumps({'error': f'Upload failed: {upload_response.status_code}'}),
             'isBase64Encoded': False
         }
     
