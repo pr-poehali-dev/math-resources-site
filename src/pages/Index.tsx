@@ -539,7 +539,7 @@ const Index = () => {
               </CardContent>
               <CardFooter className="flex justify-between items-center mt-auto">
                 {product.is_free ? (
-                  <p className="text-2xl font-bold text-green-600">Бесплатно</p>
+                  <p className="text-2xl font-bold text-gray-600">Бесплатно</p>
                 ) : (
                   <p className="text-2xl font-bold">{product.price} ₽</p>
                 )}
