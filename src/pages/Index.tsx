@@ -58,6 +58,7 @@ const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUserEmail, setCurrentUserEmail] = useState('');
   const [purchasedProductIds, setPurchasedProductIds] = useState<number[]>([]);
+  const [stats, setStats] = useState<{ total_products: number; total_files: number } | null>(null);
 
   useEffect(() => {
     // Add Yandex verification meta tag
@@ -67,6 +68,7 @@ const Index = () => {
     document.head.appendChild(meta);
 
     loadProducts();
+    loadStats();
     const token = localStorage.getItem('user_token');
     const email = localStorage.getItem('user_email');
     if (token && email) {
@@ -92,6 +94,16 @@ const Index = () => {
       toast.error('Ошибка загрузки товаров');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      const response = await fetch(`${API_URL}?stats=true`);
+      const data = await response.json();
+      setStats(data);
+    } catch (error) {
+      console.error('Ошибка загрузки статистики');
     }
   };
 
@@ -267,7 +279,16 @@ const Index = () => {
         keywords="математика, ОГЭ, ЕГЭ, тренажёры по математике, методички, рабочие листы, подготовка к экзаменам"
       />
       <div className="bg-primary text-primary-foreground py-2 text-center text-sm font-medium">
-        🎉 Скидка 15% при покупке от 10 материалов!
+        <div className="container flex items-center justify-center gap-8">
+          <span>🎉 Скидка 15% при покупке от 10 материалов!</span>
+          {stats && (
+            <div className="flex items-center gap-4 text-xs">
+              <span className="font-semibold">{stats.total_products} товаров</span>
+              <span>•</span>
+              <span className="font-semibold">{stats.total_files} файлов</span>
+            </div>
+          )}
+        </div>
       </div>
       
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
