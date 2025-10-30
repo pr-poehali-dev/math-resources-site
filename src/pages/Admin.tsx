@@ -43,6 +43,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [stats, setStats] = useState<{ total_products: number; total_files: number } | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -67,6 +68,7 @@ const Admin = () => {
       return;
     }
     loadProducts();
+    loadStats();
   }, []);
 
   const loadProducts = async () => {
@@ -76,6 +78,16 @@ const Admin = () => {
       setProducts(data);
     } catch (error) {
       toast.error('Ошибка загрузки товаров');
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      const response = await fetch(`${API_URL}?stats=true`);
+      const data = await response.json();
+      setStats(data);
+    } catch (error) {
+      console.error('Ошибка загрузки статистики');
     }
   };
 
@@ -101,6 +113,7 @@ const Admin = () => {
         setIsDialogOpen(false);
         resetForm();
         await loadProducts();
+        await loadStats();
       } else {
         toast.error('Ошибка сохранения');
       }
@@ -122,6 +135,7 @@ const Admin = () => {
       });
       toast.success('Товар удалён');
       loadProducts();
+      loadStats();
     } catch (error) {
       toast.error('Ошибка удаления');
     }
@@ -227,7 +241,20 @@ const Admin = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
+            {stats && (
+              <div className="flex items-center gap-6 px-4 py-2 bg-primary/5 rounded-lg">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary">{stats.total_products}</div>
+                  <div className="text-xs text-muted-foreground">товаров</div>
+                </div>
+                <div className="h-8 w-px bg-border" />
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary">{stats.total_files}</div>
+                  <div className="text-xs text-muted-foreground">файлов</div>
+                </div>
+              </div>
+            )}
             <Button variant="outline" onClick={() => navigate('/orders-history')}>
               <Icon name="Receipt" size={18} className="mr-2" />
               История заказов

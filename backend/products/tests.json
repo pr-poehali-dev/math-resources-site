@@ -7,6 +7,12 @@
       "expectedStatus": 200
     },
     {
+      "name": "Get stats",
+      "method": "GET",
+      "path": "/?stats=true",
+      "expectedStatus": 200
+    },
+    {
       "name": "Create product",
       "method": "POST",
       "path": "/",

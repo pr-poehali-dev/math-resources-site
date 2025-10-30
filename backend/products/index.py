@@ -33,7 +33,33 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     
     try:
         if method == 'GET':
-            product_id = event.get('queryStringParameters', {}).get('id')
+            query_params = event.get('queryStringParameters', {})
+            product_id = query_params.get('id') if query_params else None
+            stats_request = query_params.get('stats') if query_params else None
+            
+            if stats_request == 'true':
+                cur.execute('''
+                    SELECT 
+                        COUNT(*) as total_products,
+                        SUM(CASE WHEN sample_pdf_url IS NOT NULL AND sample_pdf_url != '' THEN 1 ELSE 0 END) +
+                        SUM(CASE WHEN full_pdf_with_answers_url IS NOT NULL AND full_pdf_with_answers_url != '' THEN 1 ELSE 0 END) +
+                        SUM(CASE WHEN full_pdf_without_answers_url IS NOT NULL AND full_pdf_without_answers_url != '' THEN 1 ELSE 0 END) +
+                        SUM(CASE WHEN trainer1_url IS NOT NULL AND trainer1_url != '' THEN 1 ELSE 0 END) +
+                        SUM(CASE WHEN trainer2_url IS NOT NULL AND trainer2_url != '' THEN 1 ELSE 0 END) +
+                        SUM(CASE WHEN trainer3_url IS NOT NULL AND trainer3_url != '' THEN 1 ELSE 0 END) as total_files
+                    FROM products
+                ''')
+                stats_row = cur.fetchone()
+                stats = {
+                    'total_products': stats_row[0] or 0,
+                    'total_files': int(stats_row[1] or 0)
+                }
+                return {
+                    'statusCode': 200,
+                    'headers': headers,
+                    'body': json.dumps(stats),
+                    'isBase64Encoded': False
+                }
             
             if product_id:
                 query = f"SELECT id, title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url FROM products WHERE id = {int(product_id)}"
