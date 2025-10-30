@@ -59,6 +59,7 @@ const Index = () => {
   const [currentUserEmail, setCurrentUserEmail] = useState('');
   const [purchasedProductIds, setPurchasedProductIds] = useState<number[]>([]);
   const [stats, setStats] = useState<{ total_products: number; total_files: number } | null>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     // Add Yandex verification meta tag
@@ -77,10 +78,17 @@ const Index = () => {
       loadPurchasedProducts(email);
     }
 
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
     return () => {
       // Cleanup meta tag on unmount
       const existingMeta = document.querySelector('meta[name="yandex-verification"]');
       if (existingMeta) existingMeta.remove();
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -979,6 +987,16 @@ const Index = () => {
           </Tabs>
         </DialogContent>
       </Dialog>
+
+      {showScrollTop && (
+        <Button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-8 right-8 rounded-full h-14 w-14 shadow-lg z-50"
+          size="icon"
+        >
+          <Icon name="ArrowUp" size={24} />
+        </Button>
+      )}
     </div>
   );
 };
