@@ -1,0 +1,1 @@
+UPDATE products SET preview_image_url = NULL WHERE LENGTH(preview_image_url) > 1000;
