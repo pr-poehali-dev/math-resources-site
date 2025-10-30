@@ -436,9 +436,27 @@ const Index = () => {
       <main className="container py-8">
         <section className="mb-12 text-center">
           <h2 className="text-4xl font-bold mb-4">Учебные материалы по математике</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
             Методички, рабочие листы и тренажёры для 5–11 классов, подготовка к ОГЭ и ЕГЭ
           </p>
+          {stats && (
+            <div className="flex items-center justify-center gap-8 mt-6">
+              <div className="flex items-center gap-3 px-6 py-3 bg-primary/10 rounded-xl border border-primary/20">
+                <Icon name="PackageOpen" size={24} className="text-primary" />
+                <div className="text-left">
+                  <div className="text-3xl font-bold text-primary">{stats.total_products}</div>
+                  <div className="text-sm text-muted-foreground">товаров в каталоге</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 px-6 py-3 bg-primary/10 rounded-xl border border-primary/20">
+                <Icon name="FileText" size={24} className="text-primary" />
+                <div className="text-left">
+                  <div className="text-3xl font-bold text-primary">{stats.total_files}</div>
+                  <div className="text-sm text-muted-foreground">учебных файлов</div>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         <div className="mb-6 flex justify-center">
