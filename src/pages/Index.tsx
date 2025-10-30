@@ -26,6 +26,7 @@ interface Product {
   trainer1_url?: string;
   trainer2_url?: string;
   trainer3_url?: string;
+  is_free?: boolean;
 }
 
 interface CartItem extends Product {
@@ -526,7 +527,11 @@ const Index = () => {
                 )}
               </CardContent>
               <CardFooter className="flex justify-between items-center">
-                <p className="text-2xl font-bold">{product.price} ₽</p>
+                {product.is_free ? (
+                  <p className="text-2xl font-bold text-green-600">Бесплатно</p>
+                ) : (
+                  <p className="text-2xl font-bold">{product.price} ₽</p>
+                )}
                 {(() => {
                   const isPurchased = purchasedProductIds.includes(product.id);
                   const isInCart = cart.find(item => item.id === product.id);

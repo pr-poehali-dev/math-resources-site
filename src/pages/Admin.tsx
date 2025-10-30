@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +26,7 @@ interface Product {
   trainer1_url?: string;
   trainer2_url?: string;
   trainer3_url?: string;
+  is_free?: boolean;
 }
 
 const API_URL = 'https://functions.poehali.dev/4350c782-6bfa-4c53-b148-e1f621446eaa';
@@ -51,7 +53,8 @@ const Admin = () => {
     full_pdf_without_answers_url: '',
     trainer1_url: '',
     trainer2_url: '',
-    trainer3_url: ''
+    trainer3_url: '',
+    is_free: false
   });
 
   useEffect(() => {
@@ -140,7 +143,8 @@ const Admin = () => {
       full_pdf_without_answers_url: product.full_pdf_without_answers_url || '',
       trainer1_url: product.trainer1_url || '',
       trainer2_url: product.trainer2_url || '',
-      trainer3_url: product.trainer3_url || ''
+      trainer3_url: product.trainer3_url || '',
+      is_free: product.is_free || false
     });
     setIsDialogOpen(true);
   };
@@ -158,7 +162,8 @@ const Admin = () => {
       full_pdf_without_answers_url: '',
       trainer1_url: '',
       trainer2_url: '',
-      trainer3_url: ''
+      trainer3_url: '',
+      is_free: false
     });
   };
 
@@ -243,14 +248,29 @@ const Admin = () => {
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="price">Цена (₽)</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                      required
-                    />
+                    <div className="flex items-center space-x-2 mb-3">
+                      <Checkbox
+                        id="is_free"
+                        checked={formData.is_free}
+                        onCheckedChange={(checked) => setFormData({ ...formData, is_free: !!checked })}
+                      />
+                      <Label htmlFor="is_free" className="cursor-pointer font-medium">
+                        Бесплатный материал
+                      </Label>
+                    </div>
+                    
+                    {!formData.is_free && (
+                      <div className="grid gap-2">
+                        <Label htmlFor="price">Цена (₽)</Label>
+                        <Input
+                          id="price"
+                          type="number"
+                          value={formData.price}
+                          onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                          required
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid gap-2">
@@ -405,7 +425,11 @@ const Admin = () => {
                             )}
                           </CardContent>
                           <CardFooter className="flex justify-between items-center">
-                            <p className="text-2xl font-bold">{formData.price || '0'} ₽</p>
+                            {formData.is_free ? (
+                              <p className="text-2xl font-bold text-green-600">Бесплатно</p>
+                            ) : (
+                              <p className="text-2xl font-bold">{formData.price || '0'} ₽</p>
+                            )}
                             <Button>
                               <Icon name="ShoppingCart" size={18} className="mr-2" />
                               В корзину
