@@ -66,15 +66,16 @@ const MyPurchases = () => {
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-              <Icon name="ArrowLeft" size={20} />
-            </Button>
             <Icon name="GraduationCap" size={28} className="text-primary" />
             <h1 className="text-2xl font-bold">Мои покупки</h1>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="text-sm text-muted-foreground">{userEmail}</div>
+            <Button variant="outline" onClick={() => navigate('/')}>
+              <Icon name="Home" size={18} className="mr-2" />
+              На главную
+            </Button>
             <Button variant="ghost" onClick={handleLogout}>
               <Icon name="LogOut" size={18} className="mr-2" />
               Выйти
