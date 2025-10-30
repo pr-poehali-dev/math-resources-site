@@ -42,6 +42,7 @@ const Admin = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -313,13 +314,60 @@ const Admin = () => {
 
                   <div className="grid gap-2">
                     <Label htmlFor="preview_image_url">Превью рабочего листа (необязательно)</Label>
-                    <Input
-                      id="preview_image_url"
-                      type="url"
-                      placeholder="https://cdn.poehali.dev/files/..."
-                      value={formData.preview_image_url}
-                      onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        id="preview_image_url"
+                        type="url"
+                        placeholder="https://cdn.poehali.dev/files/..."
+                        value={formData.preview_image_url}
+                        onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={uploadingImage}
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = async (e) => {
+                            const file = (e.target as HTMLInputElement).files?.[0];
+                            if (!file) return;
+                            
+                            setUploadingImage(true);
+                            try {
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              
+                              const response = await fetch('https://functions.poehali.dev/d4c26bab-d60e-43ba-bf2e-58cb81a00c30', {
+                                method: 'POST',
+                                body: formData
+                              });
+                              
+                              const data = await response.json();
+                              if (data.url) {
+                                setFormData(prev => ({ ...prev, preview_image_url: data.url }));
+                                toast.success('Картинка загружена');
+                              } else {
+                                toast.error('Ошибка загрузки');
+                              }
+                            } catch (error) {
+                              toast.error('Ошибка загрузки');
+                            } finally {
+                              setUploadingImage(false);
+                            }
+                          };
+                          input.click();
+                        }}
+                      >
+                        {uploadingImage ? (
+                          <Icon name="Loader2" size={16} className="animate-spin" />
+                        ) : (
+                          <Icon name="Upload" size={16} />
+                        )}
+                      </Button>
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       Картинка-скриншот рабочего листа — будет показываться на карточке товара
                     </p>
