@@ -350,13 +350,25 @@ const Admin = () => {
 
                   <div className="grid gap-2">
                     <Label htmlFor="preview_image_url">Превью товара (важно!)</Label>
-                    <Input
-                      id="preview_image_url"
-                      type="url"
-                      placeholder="Вставьте ссылку на картинку"
-                      value={formData.preview_image_url}
-                      onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="preview_image_url"
+                        type="url"
+                        placeholder="Вставьте ссылку на картинку"
+                        value={formData.preview_image_url}
+                        onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
+                        className="pr-10"
+                      />
+                      {formData.preview_image_url && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, preview_image_url: '' })}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
                     <div className="text-xs bg-blue-50 border border-blue-200 rounded p-3 space-y-2">
                       <p className="font-medium text-blue-900">📸 Как добавить картинку:</p>
                       <ol className="list-decimal list-inside space-y-1 text-blue-800">
