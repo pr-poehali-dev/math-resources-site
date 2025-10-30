@@ -348,7 +348,7 @@ const Admin = () => {
                                   const base64 = event.target?.result as string;
                                   const base64Data = base64.split(',')[1];
                                   
-                                  const response = await fetch('https://functions.poehali.dev/cc6c5ccf-7c44-4ff3-94d3-67a08ba0b9a9', {
+                                  const response = await fetch('https://functions.poehali.dev/656fba02-bcb4-4232-a86f-427649503545', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({
