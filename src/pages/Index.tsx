@@ -27,6 +27,7 @@ interface Product {
   trainer2_url?: string;
   trainer3_url?: string;
   is_free?: boolean;
+  preview_image_url?: string;
 }
 
 interface CartItem extends Product {
@@ -464,6 +465,16 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map(product => (
             <Card key={product.id} className="hover:shadow-lg transition-shadow flex flex-col">
+              {product.preview_image_url && (
+                <div className="w-full aspect-[3/4] overflow-hidden rounded-t-lg">
+                  <img 
+                    src={product.preview_image_url} 
+                    alt={product.title} 
+                    className="w-full h-full object-contain bg-white cursor-pointer hover:scale-105 transition-transform"
+                    onClick={() => window.open(product.preview_image_url, '_blank')}
+                  />
+                </div>
+              )}
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
                   <Badge variant="secondary">{product.category}</Badge>

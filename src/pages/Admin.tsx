@@ -27,6 +27,7 @@ interface Product {
   trainer2_url?: string;
   trainer3_url?: string;
   is_free?: boolean;
+  preview_image_url?: string;
 }
 
 const API_URL = 'https://functions.poehali.dev/4350c782-6bfa-4c53-b148-e1f621446eaa';
@@ -54,7 +55,8 @@ const Admin = () => {
     trainer1_url: '',
     trainer2_url: '',
     trainer3_url: '',
-    is_free: false
+    is_free: false,
+    preview_image_url: ''
   });
 
   useEffect(() => {
@@ -144,7 +146,8 @@ const Admin = () => {
       trainer1_url: product.trainer1_url || '',
       trainer2_url: product.trainer2_url || '',
       trainer3_url: product.trainer3_url || '',
-      is_free: product.is_free || false
+      is_free: product.is_free || false,
+      preview_image_url: product.preview_image_url || ''
     });
     setIsDialogOpen(true);
   };
@@ -163,7 +166,8 @@ const Admin = () => {
       trainer1_url: '',
       trainer2_url: '',
       trainer3_url: '',
-      is_free: false
+      is_free: false,
+      preview_image_url: ''
     });
   };
 
@@ -308,6 +312,20 @@ const Admin = () => {
                   </div>
 
                   <div className="grid gap-2">
+                    <Label htmlFor="preview_image_url">Превью рабочего листа (необязательно)</Label>
+                    <Input
+                      id="preview_image_url"
+                      type="url"
+                      placeholder="https://cdn.poehali.dev/files/..."
+                      value={formData.preview_image_url}
+                      onChange={(e) => setFormData({ ...formData, preview_image_url: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Картинка-скриншот рабочего листа — будет показываться на карточке товара
+                    </p>
+                  </div>
+
+                  <div className="grid gap-2">
                     <Label htmlFor="sample_pdf_url">Ссылка на бесплатный образец (необязательно)</Label>
                     <Input
                       id="sample_pdf_url"
@@ -404,6 +422,15 @@ const Admin = () => {
                       <div className="mt-4 p-4 bg-muted/30 rounded-lg">
                         <p className="text-xs text-muted-foreground mb-3">Так увидят покупатели:</p>
                         <Card className="hover:shadow-lg transition-shadow flex flex-col">
+                          {formData.preview_image_url && (
+                            <div className="w-full aspect-[3/4] overflow-hidden rounded-t-lg">
+                              <img 
+                                src={formData.preview_image_url} 
+                                alt={formData.title || 'Превью'} 
+                                className="w-full h-full object-contain bg-white"
+                              />
+                            </div>
+                          )}
                           <CardHeader>
                             <div className="flex justify-between items-start mb-2">
                               <Badge variant="secondary">{formData.category}</Badge>
