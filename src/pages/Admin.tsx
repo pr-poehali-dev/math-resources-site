@@ -381,7 +381,7 @@ const Admin = () => {
                               const formData = new FormData();
                               formData.append('file', file);
                               
-                              const response = await fetch('/api/upload', {
+                              const response = await fetch('https://storage-upload.poehali.dev/upload', {
                                 method: 'POST',
                                 body: formData
                               });
