@@ -28,4 +28,4 @@ Disallow: /admin
 Disallow: /admin-deliver
 Disallow: /login
 
-Sitemap: https://mk-room.ru/sitemap.xml
+Sitemap: https://p99209851.poehali.app/sitemap.xml
