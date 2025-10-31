@@ -122,6 +122,26 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     cur = conn.cursor()
     
     cur.execute(
+        "SELECT id FROM t_p99209851_math_resources_site.orders WHERE payment_id = %s",
+        (payment_id,)
+    )
+    existing_order = cur.fetchone()
+    
+    if existing_order:
+        print(f'[WEBHOOK] Order already exists for payment_id: {payment_id}')
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json'},
+            'body': json.dumps({
+                'status': 'already_processed',
+                'order_id': existing_order[0]
+            }),
+            'isBase64Encoded': False
+        }
+    
+    cur.execute(
         "INSERT INTO t_p99209851_math_resources_site.orders (guest_email, total_price, payment_id, payment_status) VALUES (%s, %s, %s, %s) RETURNING id",
         (customer_email, int(amount), payment_id, 'paid')
     )
@@ -143,6 +163,19 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     (order_id, product_id, product[0], product[1], product[2])
                 )
     
+    product_titles = []
+    if product_ids:
+        product_id_list = [int(pid) for pid in product_ids.split(',') if pid.strip()]
+        
+        for product_id in product_id_list:
+            cur.execute(
+                "SELECT title FROM t_p99209851_math_resources_site.products WHERE id = %s",
+                (product_id,)
+            )
+            product = cur.fetchone()
+            if product:
+                product_titles.append(product[0])
+    
     conn.commit()
     cur.close()
     conn.close()
@@ -163,23 +196,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     except Exception:
         pass
     
-    # Отправка уведомления в Telegram
-    if product_ids:
-        cur = conn.cursor()
-        product_id_list = [int(pid) for pid in product_ids.split(',') if pid.strip()]
-        product_titles = []
-        
-        for product_id in product_id_list:
-            cur.execute(
-                "SELECT title FROM t_p99209851_math_resources_site.products WHERE id = %s",
-                (product_id,)
-            )
-            product = cur.fetchone()
-            if product:
-                product_titles.append(product[0])
-        
-        cur.close()
-        
+    if product_titles:
         telegram_payload = json.dumps({
             'amount': str(int(amount)),
             'email': customer_email,
@@ -196,8 +213,6 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             urllib.request.urlopen(telegram_req)
         except Exception as e:
             print(f'[WEBHOOK] Telegram notification error: {str(e)}')
-    
-    conn.close()
     
     return {
         'statusCode': 200,
