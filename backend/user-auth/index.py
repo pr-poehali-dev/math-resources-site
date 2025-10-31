@@ -12,7 +12,7 @@ import jwt
 from datetime import datetime, timedelta
 from typing import Dict, Any
 
-SECRET_KEY = os.environ.get('JWT_SECRET', 'default-secret-key-change-in-production')
+SECRET_KEY = os.environ.get('USER_JWT_SECRET', 'user-secret-key-change-in-production')
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     method: str = event.get('httpMethod', 'POST')

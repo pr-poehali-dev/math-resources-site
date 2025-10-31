@@ -102,9 +102,13 @@ const Admin = () => {
         ...(editingProduct && { id: editingProduct.id })
       };
 
+      const token = localStorage.getItem('auth_token');
       const response = await fetch(API_URL, {
         method: editingProduct ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Admin-Token': token || ''
+        },
         body: JSON.stringify(payload)
       });
 
@@ -128,9 +132,13 @@ const Admin = () => {
     if (!confirm('Удалить товар?')) return;
 
     try {
+      const token = localStorage.getItem('auth_token');
       await fetch(API_URL, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Admin-Token': token || ''
+        },
         body: JSON.stringify({ id })
       });
       toast.success('Товар удалён');

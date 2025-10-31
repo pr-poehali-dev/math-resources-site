@@ -1,14 +1,32 @@
+'''
+Business: API для управления товарами (получение, добавление, обновление, удаление)
+Args: event с httpMethod, body, pathParams, headers; context с request_id
+Returns: HTTP response с JSON данными
+'''
 import json
 import os
 import psycopg2
-from typing import Dict, Any
+import jwt
+from typing import Dict, Any, Optional
+
+ADMIN_SECRET_KEY = os.environ.get('ADMIN_JWT_SECRET', 'admin-secret-key-change-in-production')
+
+def verify_admin_token(headers: Dict[str, str]) -> Optional[Dict[str, Any]]:
+    """Проверяет JWT токен админа из заголовка X-Admin-Token"""
+    token = headers.get('x-admin-token') or headers.get('X-Admin-Token')
+    
+    if not token:
+        return None
+    
+    try:
+        payload = jwt.decode(token, ADMIN_SECRET_KEY, algorithms=['HS256'])
+        if 'admin_id' not in payload:
+            return None
+        return payload
+    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+        return None
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
-    '''
-    Business: API для управления товарами (получение, добавление, обновление, удаление)
-    Args: event с httpMethod, body, pathParams; context с request_id
-    Returns: HTTP response с JSON данными
-    '''
     method: str = event.get('httpMethod', 'GET')
     
     if method == 'OPTIONS':
@@ -17,19 +35,33 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'headers': {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, X-User-Id',
+                'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Token',
                 'Access-Control-Max-Age': '86400'
             },
-            'body': ''
+            'body': '',
+            'isBase64Encoded': False
         }
     
-    conn = psycopg2.connect(os.environ['DATABASE_URL'])
-    cur = conn.cursor()
-    
-    headers = {
+    headers_response = {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
     }
+    
+    # Для POST, PUT, DELETE требуется авторизация админа
+    if method in ['POST', 'PUT', 'DELETE']:
+        request_headers = event.get('headers', {})
+        admin_payload = verify_admin_token(request_headers)
+        
+        if not admin_payload:
+            return {
+                'statusCode': 401,
+                'headers': headers_response,
+                'body': json.dumps({'error': 'Unauthorized: Admin access required'}),
+                'isBase64Encoded': False
+            }
+    
+    conn = psycopg2.connect(os.environ['DATABASE_URL'])
+    cur = conn.cursor()
     
     try:
         if method == 'GET':
@@ -56,14 +88,16 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
                 return {
                     'statusCode': 200,
-                    'headers': headers,
+                    'headers': headers_response,
                     'body': json.dumps(stats),
                     'isBase64Encoded': False
                 }
             
             if product_id:
-                query = f"SELECT id, title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url FROM products WHERE id = {int(product_id)}"
-                cur.execute(query)
+                cur.execute(
+                    "SELECT id, title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url FROM products WHERE id = %s",
+                    (int(product_id),)
+                )
                 row = cur.fetchone()
                 if row:
                     product = {
@@ -84,14 +118,14 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     }
                     return {
                         'statusCode': 200,
-                        'headers': headers,
+                        'headers': headers_response,
                         'body': json.dumps(product),
                         'isBase64Encoded': False
                     }
                 else:
                     return {
                         'statusCode': 404,
-                        'headers': headers,
+                        'headers': headers_response,
                         'body': json.dumps({'error': 'Product not found'}),
                         'isBase64Encoded': False
                     }
@@ -119,7 +153,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 ]
                 return {
                     'statusCode': 200,
-                    'headers': headers,
+                    'headers': headers_response,
                     'body': json.dumps(products),
                     'isBase64Encoded': False
                 }
@@ -127,38 +161,34 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         elif method == 'POST':
             body_data = json.loads(event.get('body', '{}'))
             
-            def safe_str(val):
-                if val is None or val == '' or (isinstance(val, str) and val.strip() == ''):
-                    return 'NULL'
-                escaped = str(val).replace("'", "''")
-                return f"'{escaped}'"
-            
             title = body_data.get('title', '')
             description = body_data.get('description', '')
             price = body_data.get('price', 0) if body_data.get('price') else 0
             category = body_data.get('category', '')
             product_type = body_data.get('type', '')
-            sample_pdf_url = body_data.get('sample_pdf_url', '')
-            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url', '')
-            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url', '')
-            trainer1_url = body_data.get('trainer1_url', '')
-            trainer2_url = body_data.get('trainer2_url', '')
-            trainer3_url = body_data.get('trainer3_url', '')
+            sample_pdf_url = body_data.get('sample_pdf_url') or None
+            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url') or None
+            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url') or None
+            trainer1_url = body_data.get('trainer1_url') or None
+            trainer2_url = body_data.get('trainer2_url') or None
+            trainer3_url = body_data.get('trainer3_url') or None
             is_free = body_data.get('is_free', False)
-            preview_image_url = body_data.get('preview_image_url', '')
+            preview_image_url = body_data.get('preview_image_url') or None
             
-            query = f"""
+            cur.execute(
+                """
                 INSERT INTO products (title, description, price, category, type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url) 
-                VALUES ({safe_str(title)}, {safe_str(description)}, {price}, {safe_str(category)}, {safe_str(product_type)}, {safe_str(sample_pdf_url)}, {safe_str(full_pdf_with_answers_url)}, {safe_str(full_pdf_without_answers_url)}, {safe_str(trainer1_url)}, {safe_str(trainer2_url)}, {safe_str(trainer3_url)}, {is_free}, {safe_str(preview_image_url)}) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
                 RETURNING id
-            """
-            cur.execute(query)
+                """,
+                (title, description, price, category, product_type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url)
+            )
             new_id = cur.fetchone()[0]
             conn.commit()
             
             return {
                 'statusCode': 201,
-                'headers': headers,
+                'headers': headers_response,
                 'body': json.dumps({'id': new_id, 'message': 'Product created'}),
                 'isBase64Encoded': False
             }
@@ -166,42 +196,36 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         elif method == 'PUT':
             body_data = json.loads(event.get('body', '{}'))
             
-            def safe_str(val):
-                if val is None or val == '' or (isinstance(val, str) and val.strip() == ''):
-                    return 'NULL'
-                escaped = str(val).replace("'", "''")
-                return f"'{escaped}'"
-            
             product_id = int(body_data.get('id'))
             title = body_data.get('title', '')
             description = body_data.get('description', '')
             price = body_data.get('price', 0) if body_data.get('price') else 0
             category = body_data.get('category', '')
             product_type = body_data.get('type', '')
-            sample_pdf_url = body_data.get('sample_pdf_url', '')
-            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url', '')
-            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url', '')
-            trainer1_url = body_data.get('trainer1_url', '')
-            trainer2_url = body_data.get('trainer2_url', '')
-            trainer3_url = body_data.get('trainer3_url', '')
+            sample_pdf_url = body_data.get('sample_pdf_url') or None
+            full_pdf_with_answers_url = body_data.get('full_pdf_with_answers_url') or None
+            full_pdf_without_answers_url = body_data.get('full_pdf_without_answers_url') or None
+            trainer1_url = body_data.get('trainer1_url') or None
+            trainer2_url = body_data.get('trainer2_url') or None
+            trainer3_url = body_data.get('trainer3_url') or None
             is_free = body_data.get('is_free', False)
-            preview_image_url = body_data.get('preview_image_url', '')
+            preview_image_url = body_data.get('preview_image_url') or None
             
-            query = f"""
+            cur.execute(
+                """
                 UPDATE products 
-                SET title = {safe_str(title)}, description = {safe_str(description)}, price = {price}, category = {safe_str(category)}, type = {safe_str(product_type)}, 
-                    sample_pdf_url = {safe_str(sample_pdf_url)}, full_pdf_with_answers_url = {safe_str(full_pdf_with_answers_url)}, 
-                    full_pdf_without_answers_url = {safe_str(full_pdf_without_answers_url)}, trainer1_url = {safe_str(trainer1_url)}, 
-                    trainer2_url = {safe_str(trainer2_url)}, trainer3_url = {safe_str(trainer3_url)}, is_free = {is_free}, 
-                    preview_image_url = {safe_str(preview_image_url)}, updated_at = CURRENT_TIMESTAMP 
-                WHERE id = {product_id}
-            """
-            cur.execute(query)
+                SET title = %s, description = %s, price = %s, category = %s, type = %s, 
+                    sample_pdf_url = %s, full_pdf_with_answers_url = %s, full_pdf_without_answers_url = %s, 
+                    trainer1_url = %s, trainer2_url = %s, trainer3_url = %s, is_free = %s, preview_image_url = %s
+                WHERE id = %s
+                """,
+                (title, description, price, category, product_type, sample_pdf_url, full_pdf_with_answers_url, full_pdf_without_answers_url, trainer1_url, trainer2_url, trainer3_url, is_free, preview_image_url, product_id)
+            )
             conn.commit()
             
             return {
                 'statusCode': 200,
-                'headers': headers,
+                'headers': headers_response,
                 'body': json.dumps({'message': 'Product updated'}),
                 'isBase64Encoded': False
             }
@@ -210,20 +234,19 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             body_data = json.loads(event.get('body', '{}'))
             product_id = int(body_data.get('id'))
             
-            query = f"DELETE FROM products WHERE id = {product_id}"
-            cur.execute(query)
+            cur.execute("DELETE FROM products WHERE id = %s", (product_id,))
             conn.commit()
             
             return {
                 'statusCode': 200,
-                'headers': headers,
+                'headers': headers_response,
                 'body': json.dumps({'message': 'Product deleted'}),
                 'isBase64Encoded': False
             }
         
         return {
             'statusCode': 405,
-            'headers': headers,
+            'headers': headers_response,
             'body': json.dumps({'error': 'Method not allowed'}),
             'isBase64Encoded': False
         }
