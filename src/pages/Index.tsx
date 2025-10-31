@@ -60,6 +60,9 @@ const Index = () => {
   const [purchasedProductIds, setPurchasedProductIds] = useState<number[]>([]);
   const [stats, setStats] = useState<{ total_products: number; total_files: number } | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [guestName, setGuestName] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
+  const [privacyConsent, setPrivacyConsent] = useState(false);
 
   useEffect(() => {
     // Add Yandex verification meta tag
@@ -673,6 +676,11 @@ const Index = () => {
             <p>© 2024 Математическая кухня | Тренажёры по математике</p>
             <p>ИП Александрова Людмила Геннадьевна</p>
             <p>ИНН: 820100655703</p>
+            <div className="flex justify-center gap-4 mt-2">
+              <a href="/privacy" className="text-primary hover:underline">Политика конфиденциальности</a>
+              <span>•</span>
+              <a href="/terms" className="text-primary hover:underline">Пользовательское соглашение</a>
+            </div>
           </div>
         </div>
       </footer>
@@ -905,6 +913,18 @@ const Index = () => {
 
             <TabsContent value="guest" className="space-y-4">
               <div className="space-y-2">
+                <Label htmlFor="guest-name">ФИО</Label>
+                <Input
+                  id="guest-name"
+                  type="text"
+                  placeholder="Иванов Иван Иванович"
+                  value={guestName}
+                  onChange={(e) => setGuestName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="guest-email">Email для получения материалов</Label>
                 <Input
                   id="guest-email"
@@ -914,15 +934,46 @@ const Index = () => {
                   onChange={(e) => setGuestEmail(e.target.value)}
                   required
                 />
-                <p className="text-xs text-muted-foreground">
-                  После оплаты материалы придут на этот email
-                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="guest-phone">Телефон</Label>
+                <Input
+                  id="guest-phone"
+                  type="tel"
+                  placeholder="+7 (900) 123-45-67"
+                  value={guestPhone}
+                  onChange={(e) => setGuestPhone(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex items-start space-x-2">
+                <input
+                  type="checkbox"
+                  id="privacy-consent"
+                  checked={privacyConsent}
+                  onChange={(e) => setPrivacyConsent(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-gray-300"
+                  required
+                />
+                <Label htmlFor="privacy-consent" className="text-xs text-muted-foreground leading-tight cursor-pointer">
+                  Я согласен с{' '}
+                  <a href="/terms" target="_blank" className="text-primary hover:underline">
+                    Пользовательским соглашением
+                  </a>
+                  {' '}и{' '}
+                  <a href="/privacy" target="_blank" className="text-primary hover:underline">
+                    Политикой конфиденциальности
+                  </a>
+                  , даю согласие на обработку персональных данных
+                </Label>
               </div>
 
               <Button 
                 className="w-full" 
                 onClick={handleGuestCheckout}
-                disabled={checkoutLoading || !guestEmail}
+                disabled={checkoutLoading || !guestEmail || !guestName || !guestPhone || !privacyConsent}
               >
                 {checkoutLoading ? 'Обработка...' : 'Перейти к оплате'}
               </Button>
@@ -963,6 +1014,28 @@ const Index = () => {
                 />
               </div>
 
+              <div className="flex items-start space-x-2">
+                <input
+                  type="checkbox"
+                  id="privacy-consent-register"
+                  checked={privacyConsent}
+                  onChange={(e) => setPrivacyConsent(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-gray-300"
+                  required
+                />
+                <Label htmlFor="privacy-consent-register" className="text-xs text-muted-foreground leading-tight cursor-pointer">
+                  Я согласен с{' '}
+                  <a href="/terms" target="_blank" className="text-primary hover:underline">
+                    Пользовательским соглашением
+                  </a>
+                  {' '}и{' '}
+                  <a href="/privacy" target="_blank" className="text-primary hover:underline">
+                    Политикой конфиденциальности
+                  </a>
+                  , даю согласие на обработку персональных данных
+                </Label>
+              </div>
+
               <p className="text-xs text-muted-foreground">
                 Создайте аккаунт — все покупки сохранятся в разделе "Мои покупки"
               </p>
@@ -970,7 +1043,7 @@ const Index = () => {
               <Button 
                 className="w-full" 
                 onClick={handleRegisterCheckout}
-                disabled={checkoutLoading || !registerEmail || !registerPassword}
+                disabled={checkoutLoading || !registerEmail || !registerPassword || !privacyConsent}
               >
                 {checkoutLoading ? 'Обработка...' : 'Создать аккаунт и оплатить'}
               </Button>
