@@ -63,6 +63,8 @@ const Index = () => {
   const [guestName, setGuestName] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [lastOrderTime, setLastOrderTime] = useState<number>(0);
 
   useEffect(() => {
     // Add Yandex verification meta tag
@@ -166,6 +168,20 @@ const Index = () => {
   const handleGuestCheckout = async () => {
     if (!guestEmail || cart.length === 0) return;
     
+    // Защита от повторных отправок в течение 5 секунд
+    const now = Date.now();
+    if (now - lastOrderTime < 5000) {
+      toast.error('Подождите немного перед следующим заказом');
+      return;
+    }
+    
+    if (isProcessingPayment) {
+      toast.error('Заказ уже обрабатывается...');
+      return;
+    }
+    
+    setIsProcessingPayment(true);
+    setLastOrderTime(now);
     setCheckoutLoading(true);
     try {
       const returnUrl = window.location.origin + '/';
@@ -193,12 +209,27 @@ const Index = () => {
       toast.error('Ошибка при оплате');
     } finally {
       setCheckoutLoading(false);
+      setTimeout(() => setIsProcessingPayment(false), 1000);
     }
   };
 
   const handleRegisterCheckout = async () => {
     if (!registerEmail || !registerPassword || cart.length === 0) return;
     
+    // Защита от повторных отправок в течение 5 секунд
+    const now = Date.now();
+    if (now - lastOrderTime < 5000) {
+      toast.error('Подождите немного перед следующим заказом');
+      return;
+    }
+    
+    if (isProcessingPayment) {
+      toast.error('Заказ уже обрабатывается...');
+      return;
+    }
+    
+    setIsProcessingPayment(true);
+    setLastOrderTime(now);
     setCheckoutLoading(true);
     try {
       const authResponse = await fetch('https://functions.poehali.dev/952cea32-e71e-48d7-8465-264417100e39', {
@@ -246,12 +277,27 @@ const Index = () => {
       toast.error('Ошибка при оформлении');
     } finally {
       setCheckoutLoading(false);
+      setTimeout(() => setIsProcessingPayment(false), 1000);
     }
   };
 
   const handleLoggedInCheckout = async () => {
     if (!currentUserEmail || cart.length === 0) return;
     
+    // Защита от повторных отправок в течение 5 секунд
+    const now = Date.now();
+    if (now - lastOrderTime < 5000) {
+      toast.error('Подождите немного перед следующим заказом');
+      return;
+    }
+    
+    if (isProcessingPayment) {
+      toast.error('Заказ уже обрабатывается...');
+      return;
+    }
+    
+    setIsProcessingPayment(true);
+    setLastOrderTime(now);
     setCheckoutLoading(true);
     try {
       const returnUrl = window.location.origin + '/my-purchases';
@@ -279,6 +325,7 @@ const Index = () => {
       toast.error('Ошибка при оплате');
     } finally {
       setCheckoutLoading(false);
+      setTimeout(() => setIsProcessingPayment(false), 1000);
     }
   };
 
