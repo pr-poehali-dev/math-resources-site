@@ -163,6 +163,42 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     except Exception:
         pass
     
+    # Отправка уведомления в Telegram
+    if product_ids:
+        cur = conn.cursor()
+        product_id_list = [int(pid) for pid in product_ids.split(',') if pid.strip()]
+        product_titles = []
+        
+        for product_id in product_id_list:
+            cur.execute(
+                "SELECT title FROM t_p99209851_math_resources_site.products WHERE id = %s",
+                (product_id,)
+            )
+            product = cur.fetchone()
+            if product:
+                product_titles.append(product[0])
+        
+        cur.close()
+        
+        telegram_payload = json.dumps({
+            'amount': str(int(amount)),
+            'email': customer_email,
+            'products': product_titles
+        }).encode()
+        
+        telegram_req = urllib.request.Request(
+            'https://functions.poehali.dev/ce167a18-88d6-47c0-bb99-ee0343589867',
+            data=telegram_payload,
+            headers={'Content-Type': 'application/json'}
+        )
+        
+        try:
+            urllib.request.urlopen(telegram_req)
+        except Exception as e:
+            print(f'[WEBHOOK] Telegram notification error: {str(e)}')
+    
+    conn.close()
+    
     return {
         'statusCode': 200,
         'headers': {'Content-Type': 'application/json'},

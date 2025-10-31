@@ -1,0 +1,19 @@
+{
+  "tests": [
+    {
+      "name": "Send notification test",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "amount": "1500",
+        "email": "test@example.com",
+        "products": ["Материал 1", "Материал 2"]
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
