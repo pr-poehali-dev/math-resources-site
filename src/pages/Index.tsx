@@ -287,16 +287,7 @@ const Index = () => {
         keywords="математика, ОГЭ, ЕГЭ, тренажёры по математике, методички, рабочие листы, подготовка к экзаменам"
       />
       <div className="bg-primary text-primary-foreground py-2 text-center text-sm font-medium">
-        <div className="container flex items-center justify-center gap-8">
-          <span>🎉 Скидка 15% при покупке от 10 материалов!</span>
-          {stats && (
-            <div className="flex items-center gap-4 text-xs">
-              <span className="font-semibold">{stats.total_products} товаров</span>
-              <span>•</span>
-              <span className="font-semibold">{stats.total_files} файлов</span>
-            </div>
-          )}
-        </div>
+        <span>🎉 Скидка 15% при покупке от 10 материалов!</span>
       </div>
       
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
