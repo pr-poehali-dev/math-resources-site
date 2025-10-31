@@ -913,14 +913,13 @@ const Index = () => {
 
             <TabsContent value="guest" className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="guest-name">ФИО</Label>
+                <Label htmlFor="guest-name">ФИО (необязательно)</Label>
                 <Input
                   id="guest-name"
                   type="text"
                   placeholder="Иванов Иван Иванович"
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
-                  required
                 />
               </div>
 
@@ -937,14 +936,13 @@ const Index = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="guest-phone">Телефон</Label>
+                <Label htmlFor="guest-phone">Телефон (необязательно)</Label>
                 <Input
                   id="guest-phone"
                   type="tel"
                   placeholder="+7 (900) 123-45-67"
                   value={guestPhone}
                   onChange={(e) => setGuestPhone(e.target.value)}
-                  required
                 />
               </div>
 
@@ -973,7 +971,7 @@ const Index = () => {
               <Button 
                 className="w-full" 
                 onClick={handleGuestCheckout}
-                disabled={checkoutLoading || !guestEmail || !guestName || !guestPhone || !privacyConsent}
+                disabled={checkoutLoading || !guestEmail || !privacyConsent}
               >
                 {checkoutLoading ? 'Обработка...' : 'Перейти к оплате'}
               </Button>
