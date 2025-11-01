@@ -348,11 +348,6 @@ const Index = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/admin')}>
-              <Icon name="Settings" size={18} className="mr-2" />
-              Админка
-            </Button>
-
             {isLoggedIn ? (
               <Button variant="ghost" size="sm" onClick={() => navigate('/my-purchases')}>
                 <Icon name="User" size={18} className="mr-2" />
