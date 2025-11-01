@@ -44,6 +44,7 @@ const Admin = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [stats, setStats] = useState<{ total_products: number; total_files: number } | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -655,12 +656,34 @@ const Admin = () => {
 
       <main className="container py-8">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-2">Все товары</h2>
-          <p className="text-muted-foreground">Всего: {products.length}</p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-2xl font-bold mb-1">Все товары</h2>
+              <p className="text-muted-foreground">Всего: {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase())).length}</p>
+            </div>
+            <div className="relative w-72">
+              <Icon name="Search" size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Поиск по названию..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  <Icon name="X" size={16} />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {products.map(product => (
+          {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase())).map(product => (
             <Card key={product.id}>
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
@@ -693,10 +716,10 @@ const Admin = () => {
           ))}
         </div>
 
-        {products.length === 0 && (
+        {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
             <Icon name="Package" size={48} className="mx-auto mb-4 opacity-50" />
-            <p>Нет товаров. Добавьте первый!</p>
+            <p>{searchQuery ? 'Ничего не найдено' : 'Нет товаров. Добавьте первый!'}</p>
           </div>
         )}
       </main>
