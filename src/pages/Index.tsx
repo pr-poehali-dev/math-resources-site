@@ -554,21 +554,20 @@ const Index = () => {
             {filteredProducts.map(product => (
             <Card key={product.id} className="hover:shadow-lg transition-shadow flex flex-col">
               {product.preview_image_url && (
-                <div className="w-full aspect-[3/4] overflow-hidden rounded-t-lg">
+                <div className="w-full aspect-[3/4] overflow-hidden rounded-t-lg cursor-pointer" onClick={() => navigate(`/product/${product.id}`)}>
                   <img 
                     src={product.preview_image_url} 
                     alt={product.title} 
-                    className="w-full h-full object-contain bg-white cursor-pointer hover:scale-105 transition-transform"
-                    onClick={() => window.open(product.preview_image_url, '_blank')}
+                    className="w-full h-full object-contain bg-white hover:scale-105 transition-transform"
                   />
                 </div>
               )}
-              <CardHeader>
+              <CardHeader className="cursor-pointer" onClick={() => navigate(`/product/${product.id}`)}>
                 <div className="flex justify-between items-start mb-2">
                   <Badge variant="secondary">{product.category}</Badge>
                   <Badge variant="outline">{product.type}</Badge>
                 </div>
-                <CardTitle className="text-lg">{product.title}</CardTitle>
+                <CardTitle className="text-lg hover:text-primary transition-colors">{product.title}</CardTitle>
                 <CardDescription className="text-sm leading-relaxed">
                   {product.description.split('\n').map((line, i) => (
                     <div key={i} className={line.trim() ? "mb-1" : "mb-2"}>{line || '\u00A0'}</div>
