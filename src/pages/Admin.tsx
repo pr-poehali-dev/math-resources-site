@@ -282,7 +282,7 @@ const Admin = () => {
                 Добавить товар
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
               <form onSubmit={handleSubmit}>
                 <DialogHeader>
                   <DialogTitle>{editingProduct ? 'Редактировать' : 'Добавить'} товар</DialogTitle>
